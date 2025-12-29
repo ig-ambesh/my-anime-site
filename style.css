@@ -213,3 +213,55 @@ h1.section-title {
     background: transparent; border: none; color: #ff4d4d;
     text-align: left; cursor: pointer; padding-top: 5px;
 }
+
+/* --- MOBILE SPECIFIC FIXES --- */
+@media (max-width: 768px) {
+    
+    /* 1. Stack the layout vertically */
+    .container {
+        padding: 10px;
+        width: 100%;
+    }
+    
+    /* 2. Make the Grid 2 columns (or 1) for phone */
+    .grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 items per row */
+        gap: 15px;
+    }
+
+    /* 3. Hide the Sidebar on the Watch Page (Move to bottom) */
+    .watch-container {
+        grid-template-columns: 1fr; /* Single column */
+    }
+
+    /* 4. Fix Navigation Bar */
+    nav {
+        flex-direction: column; /* Stack Logo and Search */
+        gap: 10px;
+        padding: 15px;
+    }
+    .search-input {
+        width: 100%; /* Full width search bar */
+    }
+    .user-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* 5. Make Buttons Bigger for Fingers */
+    .season-btn, .ep-btn {
+        padding: 15px; /* Fat buttons */
+        font-size: 1rem;
+    }
+    
+    /* 6. Fix Video Player Height */
+    .video-container {
+        padding-bottom: 56.25%; /* Keep 16:9 ratio */
+    }
+    
+    /* 7. Sidebar adjustments for mobile */
+    .sidebar {
+        height: auto; /* Let it grow naturally */
+        max-height: 500px;
+    }
+}
