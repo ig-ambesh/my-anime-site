@@ -267,31 +267,32 @@ if (player) {
         const sTabs = document.getElementById('season-tabs');
         const epList = document.getElementById('episode-list-container');
         
-        // CSS Elements to manipulate layout
+        // Layout Elements
         const sidebar = document.querySelector('.sidebar');
         const watchContainer = document.querySelector('.watch-container');
 
         // --- SCENARIO A: IT IS A MOVIE ---
         if (content.type === 'movie') {
-            // 1. Play Video Immediately
+            // 1. Play Video
             player.src = content.videoUrl;
             document.getElementById('ep-title').innerText = "Full Movie";
             
-            // 2. Hide Sidebar & Stretch Player
-            if(sidebar) sidebar.style.display = 'none';
-            if(watchContainer) watchContainer.style.gridTemplateColumns = '1fr';
+            // 2. Apply Movie Layout Class (Fixes Mobile Issue)
+            if(watchContainer) watchContainer.classList.add('movie-mode');
+            if(sidebar) sidebar.style.display = 'none'; // Double check hidden
 
             // 3. Save History
             saveHistory(id, content, "Movie");
-            return; // Stop here! No episodes to load.
+            return; 
         }
 
         // --- SCENARIO B: IT IS A SERIES ---
-        // Ensure standard layout
+        // 1. Reset Layout (Remove Movie Class)
+        if(watchContainer) watchContainer.classList.remove('movie-mode');
         if(sidebar) sidebar.style.display = 'flex';
-        if(watchContainer) watchContainer.style.gridTemplateColumns = '3fr 1fr'; // Mobile CSS will override this if needed
 
-        // Generate Season Tabs
+        // 2. Load Seasons
+        sTabs.innerHTML = ""; // Clear old tabs
         content.seasons.forEach((season, index) => {
             const btn = document.createElement('button');
             btn.classList.add('season-btn');
@@ -300,26 +301,21 @@ if (player) {
             sTabs.appendChild(btn);
         });
 
-        // Load First Season by Default
+        // 3. Load First Season
         if(content.seasons.length > 0) loadEpisodes(0);
 
         function loadEpisodes(seasonIndex) {
-            epList.innerHTML = ""; // Clear list
+            epList.innerHTML = "";
             content.seasons[seasonIndex].episodes.forEach(ep => {
                 const btn = document.createElement('div');
                 btn.classList.add('ep-btn');
                 btn.innerText = ep.title;
                 
                 btn.onclick = () => {
-                    // Play Video
                     player.src = ep.url;
                     document.getElementById('ep-title').innerText = ep.title;
-                    
-                    // Highlight Button
                     document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-
-                    // Save History
                     saveHistory(id, content, `Ep: ${ep.title}`);
                 };
                 epList.appendChild(btn);

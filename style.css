@@ -226,3 +226,33 @@ h1.section-title { font-size: 2rem; margin-bottom: 30px; font-weight: 600; borde
     padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;
     z-index: 2; border: 1px solid rgba(255,255,255,0.3);
 }
+
+/* --- PLAYER LAYOUTS --- */
+.watch-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr; /* Default: Series Mode (Video + Sidebar) */
+    gap: 30px;
+}
+
+/* Movie Mode: Adds this class when watching a movie */
+.watch-container.movie-mode {
+    grid-template-columns: 1fr; /* Full width */
+}
+.watch-container.movie-mode .sidebar {
+    display: none; /* Hide sidebar for movies */
+}
+
+/* --- MOBILE RESPONSIVE (The Fix) --- */
+@media (max-width: 900px) {
+    /* Force stacking on mobile, regardless of Movie or Series */
+    .watch-container, 
+    .watch-container.movie-mode { 
+        grid-template-columns: 1fr !important; 
+    }
+
+    .sidebar { 
+        width: 100%; 
+        height: auto; 
+        max-height: 500px; /* Limit height on phone */
+    }
+}
