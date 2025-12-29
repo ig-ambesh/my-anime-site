@@ -242,3 +242,24 @@ nav {
     position: relative; 
     /* ... your existing styles ... */
 }
+
+/* Fix Select2 Dark Mode */
+.select2-container .select2-selection--single {
+    height: 38px !important;
+    background-color: #222 !important;
+    border: 1px solid #444 !important;
+    color: white !important;
+}
+.select2-selection__rendered {
+    color: white !important;
+    line-height: 36px !important;
+}
+.select2-dropdown {
+    background-color: #222 !important;
+    border: 1px solid #444 !important;
+    color: white !important;
+}
+.select2-search__field {
+    background-color: #333 !important;
+    color: white !important;
+}
