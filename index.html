@@ -3,49 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AniStream</title>
+    <title>AniStream - Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <nav>
-        <div class="logo">AniStream</div>
+        <a href="index.html" class="logo">AniStream</a>
+        <input type="text" id="search-bar" placeholder="Search..." class="search-input">
         
-        <input type="text" id="search-bar" placeholder="Find anime..." class="search-input">
-
         <div class="user-actions">
             <button id="login-btn" class="glass-btn" onclick="googleLogin()">
-                <i class="fas fa-google"></i> Sign In
+                <i class="fab fa-google"></i> Sign In
             </button>
-
             <div id="user-profile" class="user-profile" style="display: none;">
                 <img id="user-avatar" src="" alt="User">
                 <div class="dropdown-menu">
-                    <span id="user-name">User</span>
-                    <hr style="border-color: rgba(255,255,255,0.1); margin: 5px 0;">
+                    <span id="user-name" style="color:white; margin-bottom:10px; font-weight:bold;">User</span>
                     <button onclick="logout()">Sign Out</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="container">
+    <div class="hero-container">
+        <div id="hero-slider" class="slider-wrapper"></div>
         
-        <div id="continue-watching-section" style="display: none; margin-bottom: 50px;">
+        <button class="slider-btn prev">&#10094;</button>
+        <button class="slider-btn next">&#10095;</button>
+
+        <div id="slider-dots" class="dots-container" style="position: absolute; bottom: 20px; left: 50%; display: flex; gap: 10px;"></div>
+    </div>
+
+    <div class="container">
+        <div id="continue-watching-section" style="display: none; margin-bottom: 40px;">
             <h1 class="section-title">Continue Watching</h1>
             <div id="history-grid" class="grid"></div>
         </div>
 
         <h1 class="section-title">Trending Now</h1>
         <div id="anime-grid" class="grid">
-            <p style="color: #666;">Loading content...</p>
+            <p style="color: #666;">Loading library...</p>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>

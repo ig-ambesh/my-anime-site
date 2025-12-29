@@ -3,7 +3,7 @@
     --bg-color: #050505;
     --glass-surface: rgba(255, 255, 255, 0.03);
     --glass-border: rgba(255, 255, 255, 0.08);
-    --primary-glow: linear-gradient(135deg, #FF3D77, #8B5CF6); /* Pink/Purple Glow */
+    --primary-glow: linear-gradient(135deg, #FF3D77, #8B5CF6);
     --accent-color: #e50914;
     --text-main: #ffffff;
     --text-muted: #a3a3a3;
@@ -15,7 +15,6 @@ body {
     background-color: var(--bg-color);
     color: var(--text-main);
     min-height: 100vh;
-    /* Subtle Ambient Background Mesh */
     background-image: 
         radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 25%), 
         radial-gradient(circle at 85% 30%, rgba(255, 61, 119, 0.08), transparent 25%);
@@ -25,243 +24,186 @@ body {
 /* --- 2. FLOATING NAVBAR --- */
 nav {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 5%;
-    position: sticky; top: 20px; z-index: 100;
+    padding: 15px 5%; position: sticky; top: 20px; z-index: 100;
     margin: 0 auto; width: 90%;
-    
-    /* Glass Effect */
-    background: rgba(10, 10, 10, 0.6);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
+    background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border); border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
     font-size: 1.5rem; font-weight: 800; letter-spacing: -1px;
     background: var(--primary-glow); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    cursor: pointer;
+    cursor: pointer; text-decoration: none;
 }
 
 .search-input {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--glass-border);
-    color: white; padding: 10px 20px; border-radius: 20px;
-    width: 250px; transition: 0.3s ease; outline: none;
+    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+    color: white; padding: 10px 20px; border-radius: 20px; width: 250px;
+    transition: 0.3s ease; outline: none;
 }
-.search-input:focus {
-    width: 320px; background: rgba(0,0,0,0.5); border-color: #8B5CF6;
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
-}
+.search-input:focus { width: 320px; background: rgba(0,0,0,0.5); border-color: #8B5CF6; }
 
-.back-btn { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; transition: 0.2s; }
-.back-btn:hover { color: white; }
-
-/* --- 3. LAYOUT & GRID --- */
-.container { max-width: 1400px; margin: 40px auto; padding: 0 20px; }
-
-h1.section-title {
-    font-size: 2rem; margin-bottom: 30px; font-weight: 600;
-    border-left: 4px solid #FF3D77; padding-left: 15px;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 30px;
-}
-
-/* --- 4. GLASS ANIME CARDS --- */
-.anime-card {
-    background: var(--glass-surface);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.anime-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-}
-.anime-card:hover img { transform: scale(1.1); }
-
-.anime-card img {
-    width: 100%; height: 320px; object-fit: cover;
-    transition: transform 0.4s ease;
-}
-
-.card-info {
-    padding: 15px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    position: absolute; bottom: 0; left: 0; width: 100%;
-}
-.card-info h3 { font-size: 1.1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.card-info p { font-size: 0.85rem; color: var(--text-muted); }
-
-/* Badge & Error Styles */
-.badge-new {
-    position: absolute; top: 10px; right: 10px;
-    background: var(--primary-glow);
-    padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold;
-    box-shadow: 0 5px 15px rgba(255, 61, 119, 0.4); z-index: 2;
-}
-.img-error { object-fit: contain !important; padding: 40px; background: #111; }
-
-/* --- 5. PLAYER PAGE LAYOUT --- */
-.watch-container {
-    display: grid; grid-template-columns: 3fr 1fr; gap: 30px;
-}
-
-/* Video Player Box */
-.video-wrapper {
-    background: var(--glass-surface);
-    border: 1px solid var(--glass-border);
-    padding: 10px; border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
-.video-container {
-    position: relative; padding-bottom: 56.25%; height: 0;
-    border-radius: 12px; overflow: hidden; background: black;
-}
-.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-.video-meta { margin-top: 25px; padding: 0 10px; }
-.video-meta h2 { font-size: 2rem; background: linear-gradient(to right, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
-
-/* Sidebar Glass Panel */
-.sidebar {
-    background: rgba(20, 20, 20, 0.6);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 20px;
-    height: 700px;
-    display: flex; flex-direction: column;
-}
-
-/* Season Tabs */
-.season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); margin-bottom: 15px; }
-.season-btn {
-    background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);
-    padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.3s;
-}
-.season-btn:hover { color: white; border-color: white; }
-.season-btn.active-season { background: white; color: black; font-weight: bold; border-color: white; }
-
-/* Episode List */
-.episode-list { overflow-y: auto; flex: 1; padding-right: 5px; }
-.episode-list::-webkit-scrollbar { width: 5px; }
-.episode-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
-.ep-btn {
-    width: 100%; text-align: left; padding: 15px; margin-bottom: 8px;
-    background: rgba(255,255,255,0.03); border: 1px solid transparent;
-    border-radius: 12px; color: #ddd; cursor: pointer; transition: 0.2s;
-    display: flex; align-items: center;
-}
-.ep-btn:before { content: '▶'; font-size: 0.7rem; margin-right: 10px; color: #555; }
-.ep-btn:hover { background: rgba(255,255,255,0.08); padding-left: 20px; }
-.ep-btn.active {
-    background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), transparent);
-    border-left: 3px solid #8B5CF6; color: white;
-}
-.ep-btn.active:before { color: #8B5CF6; }
-
-/* Mobile */
-@media (max-width: 900px) {
-    .watch-container { grid-template-columns: 1fr; }
-    .sidebar { height: 500px; }
-    nav { width: 95%; top: 10px; }
-}
-
-/* --- USER PROFILE STYLES --- */
+/* USER PROFILE */
 .user-actions { display: flex; align-items: center; gap: 15px; }
-
 .glass-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--glass-border);
-    color: white; padding: 8px 16px; border-radius: 20px;
-    cursor: pointer; transition: 0.3s;
+    background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border);
+    color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: 0.3s;
 }
 .glass-btn:hover { background: white; color: black; }
 
 .user-profile { position: relative; cursor: pointer; }
-
-#user-avatar {
-    width: 40px; height: 40px; border-radius: 50%;
-    border: 2px solid #8B5CF6;
-    transition: 0.3s;
-}
-
-/* Dropdown Menu */
+#user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #8B5CF6; }
 .dropdown-menu {
     position: absolute; top: 50px; right: 0;
-    background: rgba(10, 10, 10, 0.9);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    padding: 15px; border-radius: 12px;
-    width: 150px; display: none; /* Hidden by default */
-    flex-direction: column;
+    background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border); padding: 15px; border-radius: 12px;
+    width: 150px; display: none; flex-direction: column;
 }
 .user-profile:hover .dropdown-menu { display: flex; }
+.dropdown-menu button { background: transparent; border: none; color: #ff4d4d; text-align: left; cursor: pointer; padding-top: 5px; }
 
-.dropdown-menu button {
-    background: transparent; border: none; color: #ff4d4d;
-    text-align: left; cursor: pointer; padding-top: 5px;
+/* --- 3. HERO SLIDER --- */
+.hero-container {
+    position: relative; width: 90%; max-width: 1600px; margin: 30px auto;
+    height: 450px; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
+}
+.slider-wrapper { position: relative; width: 100%; height: 100%; }
+.slide {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0; transition: opacity 0.8s ease-in-out;
+    background-size: cover; background-position: center;
+}
+.slide.active { opacity: 1; z-index: 1; }
+/* Dark Overlay to make text visible */
+.slide::after { 
+    content: ''; position: absolute; inset: 0; 
+    background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+    z-index: 2; 
 }
 
-/* --- MOBILE SPECIFIC FIXES --- */
-@media (max-width: 768px) {
-    
-    /* 1. Stack the layout vertically */
-    .container {
-        padding: 10px;
-        width: 100%;
-    }
-    
-    /* 2. Make the Grid 2 columns (or 1) for phone */
-    .grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 items per row */
-        gap: 15px;
-    }
+.slide-content {
+    position: relative; z-index: 5; /* Sit on top of overlay */
+    top: 50%; transform: translateY(-50%);
+    left: 50px; max-width: 500px;
+    color: white;
+}
+.slide-title { 
+    font-size: 3rem; font-weight: 800; margin-bottom: 10px; line-height: 1.1; 
+    color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+}
+.slide-desc { color: #ddd; margin-bottom: 25px; font-size: 1.1rem; }
+.watch-now-btn {
+    padding: 12px 30px; background: var(--accent-color); color: white;
+    border: none; border-radius: 30px; font-weight: bold; cursor: pointer;
+    box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
+}
 
-    /* 3. Hide the Sidebar on the Watch Page (Move to bottom) */
-    .watch-container {
-        grid-template-columns: 1fr; /* Single column */
-    }
-
-    /* 4. Fix Navigation Bar */
-    nav {
-        flex-direction: column; /* Stack Logo and Search */
-        gap: 10px;
-        padding: 15px;
-    }
-    .search-input {
-        width: 100%; /* Full width search bar */
-    }
-    .user-actions {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    /* 5. Make Buttons Bigger for Fingers */
-    .season-btn, .ep-btn {
-        padding: 15px; /* Fat buttons */
-        font-size: 1rem;
-    }
+/* --- GLASS SLIDER ARROWS --- */
+/* --- GLASS SLIDER ARROWS (HOVER EFFECT) --- */
+.slider-btn {
+    position: absolute; top: 50%; 
+    /* Move slightly outward by default for animation effect */
+    transform: translateY(-50%) scale(0.9);
     
-    /* 6. Fix Video Player Height */
-    .video-container {
-        padding-bottom: 56.25%; /* Keep 16:9 ratio */
-    }
+    width: 50px; height: 50px;
+    background: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(10px); 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white; border-radius: 50%;
+    cursor: pointer; z-index: 10;
     
-    /* 7. Sidebar adjustments for mobile */
-    .sidebar {
-        height: auto; /* Let it grow naturally */
-        max-height: 500px;
-    }
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+
+    /* HIDDEN BY DEFAULT */
+    opacity: 0; 
+    pointer-events: none; /* Prevents accidental clicks when hidden */
+    transition: all 0.3s ease-in-out;
+}
+
+.prev { left: 20px; }
+.next { right: 20px; }
+
+/* SHOW WHEN HOVERING THE BANNER */
+.hero-container:hover .slider-btn {
+    opacity: 1;
+    pointer-events: all; /* Re-enable clicking */
+    transform: translateY(-50%) scale(1); /* Smooth pop-in animation */
+}
+
+/* GLOW ON HOVERING THE BUTTON ITSELF */
+.slider-btn:hover {
+    background: rgba(255, 255, 255, 0.4); 
+    border-color: white;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    transform: translateY(-50%) scale(1.1) !important;
+}
+
+/* --- 4. GRID & CARDS --- */
+.container { max-width: 1400px; margin: 40px auto; padding: 0 20px; }
+h1.section-title { font-size: 2rem; margin-bottom: 30px; font-weight: 600; border-left: 4px solid #FF3D77; padding-left: 15px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+
+.anime-card {
+    background: var(--glass-surface); border: 1px solid var(--glass-border);
+    border-radius: 16px; overflow: hidden; cursor: pointer; position: relative;
+    transition: all 0.4s;
+}
+.anime-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+.anime-card img { width: 100%; height: 300px; object-fit: cover; }
+.card-info {
+    padding: 15px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    position: absolute; bottom: 0; width: 100%;
+}
+.card-info h3 { font-size: 1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* BADGES */
+.badge-new {
+    position: absolute; top: 10px; right: 10px; background: var(--accent-color);
+    padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold;
+    box-shadow: 0 5px 15px rgba(255, 9, 20, 0.4); z-index: 2;
+}
+
+/* --- 5. PLAYER PAGE --- */
+.watch-container { display: grid; grid-template-columns: 3fr 1fr; gap: 30px; }
+.video-wrapper {
+    background: var(--glass-surface); border: 1px solid var(--glass-border);
+    padding: 10px; border-radius: 20px;
+}
+.video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; background: black; }
+.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+.sidebar {
+    background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border); border-radius: 20px;
+    padding: 20px; height: 600px; display: flex; flex-direction: column;
+}
+.season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); }
+.season-btn {
+    background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);
+    padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap;
+}
+.season-btn.active-season { background: white; color: black; font-weight: bold; }
+
+.episode-list { overflow-y: auto; flex: 1; }
+.ep-btn {
+    width: 100%; text-align: left; padding: 15px; margin-bottom: 8px;
+    background: rgba(255,255,255,0.03); border-radius: 12px; color: #ddd; cursor: pointer;
+}
+.ep-btn.active { background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), transparent); border-left: 3px solid #8B5CF6; color: white; }
+
+/* MOBILE */
+@media (max-width: 900px) {
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+    .watch-container { grid-template-columns: 1fr; }
+    .sidebar { height: 400px; }
+    nav { flex-direction: column; gap: 10px; }
+    .search-input { width: 100%; }
+    .hero-container { height: 300px; }
+    .slide-title { font-size: 2rem; }
+    .slide-content { left: 20px; width: 90%; }
 }
