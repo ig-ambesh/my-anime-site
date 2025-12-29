@@ -219,3 +219,10 @@ h1.section-title { font-size: 2rem; margin-bottom: 30px; font-weight: 600; borde
 }
 .lang-dub { background: #8B5CF6; }
 .lang-hindi { background: #F59E0B; }
+
+.type-badge {
+    position: absolute; bottom: 10px; right: 10px;
+    background: rgba(0,0,0,0.8); color: white;
+    padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;
+    z-index: 2; border: 1px solid rgba(255,255,255,0.3);
+}
