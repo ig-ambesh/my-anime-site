@@ -1,265 +1,215 @@
-/* --- Base Styles --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* --- 1. GLOBAL VARIABLES & RESET --- */
+:root {
+    --bg-color: #050505;
+    --glass-surface: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --primary-glow: linear-gradient(135deg, #FF3D77, #8B5CF6); /* Pink/Purple Glow */
+    --accent-color: #e50914;
+    --text-main: #ffffff;
+    --text-muted: #a3a3a3;
 }
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
 
 body {
-    background-color: #121212;
-    color: #ffffff;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    /* Subtle Ambient Background Mesh */
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 25%), 
+        radial-gradient(circle at 85% 30%, rgba(255, 61, 119, 0.08), transparent 25%);
+    background-attachment: fixed;
 }
 
-/* --- Navigation --- */
+/* --- 2. FLOATING NAVBAR --- */
 nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     padding: 15px 5%;
-    background-color: #1f1f1f;
-    border-bottom: 2px solid #e50914;
+    position: sticky; top: 20px; z-index: 100;
+    margin: 0 auto; width: 90%;
+    
+    /* Glass Effect */
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-/* Search Bar Styling */
+.logo {
+    font-size: 1.5rem; font-weight: 800; letter-spacing: -1px;
+    background: var(--primary-glow); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    cursor: pointer;
+}
+
 .search-input {
-    padding: 10px 15px;
-    width: 300px;
-    border-radius: 20px;
-    border: none;
-    background-color: #333;
-    color: white;
-    font-size: 1rem;
-    outline: none;
-    transition: width 0.3s ease, background 0.3s;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: white; padding: 10px 20px; border-radius: 20px;
+    width: 250px; transition: 0.3s ease; outline: none;
 }
-
-.search-input::placeholder {
-    color: #bbb;
-}
-
 .search-input:focus {
-    background-color: #444;
-    width: 350px; /* Expands slightly when clicked */
-    box-shadow: 0 0 5px rgba(229, 9, 20, 0.5);
+    width: 320px; background: rgba(0,0,0,0.5); border-color: #8B5CF6;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
 }
 
-/* Mobile Search Styling */
-@media (max-width: 600px) {
-    .search-input {
-        width: 150px;
-        font-size: 0.8rem;
-    }
-    .search-input:focus {
-        width: 180px;
-    }
-}
-
-.logo, .logo a {
-    font-size: 24px;
-    font-weight: bold;
-    color: #e50914;
-    text-transform: uppercase;
-    text-decoration: none;
-    letter-spacing: 1px;
-}
-
-.back-btn {
-    color: #ccc;
-    text-decoration: none;
-    font-size: 0.9rem;
-}
+.back-btn { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; transition: 0.2s; }
 .back-btn:hover { color: white; }
 
-/* --- Layout Containers --- */
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
+/* --- 3. LAYOUT & GRID --- */
+.container { max-width: 1400px; margin: 40px auto; padding: 0 20px; }
+
+h1.section-title {
+    font-size: 2rem; margin-bottom: 30px; font-weight: 600;
+    border-left: 4px solid #FF3D77; padding-left: 15px;
 }
 
-/* --- HOME PAGE: Grid --- */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 25px;
-    margin-top: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 30px;
 }
 
+/* --- 4. GLASS ANIME CARDS --- */
 .anime-card {
-    background-color: #1f1f1f;
-    border-radius: 8px;
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .anime-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+    transform: translateY(-10px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
 }
+.anime-card:hover img { transform: scale(1.1); }
 
 .anime-card img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
+    width: 100%; height: 320px; object-fit: cover;
+    transition: transform 0.4s ease;
 }
 
 .card-info {
     padding: 15px;
-    text-align: center;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    position: absolute; bottom: 0; left: 0; width: 100%;
 }
+.card-info h3 { font-size: 1.1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-info p { font-size: 0.85rem; color: var(--text-muted); }
 
-/* --- WATCH PAGE: Player --- */
+/* Badge & Error Styles */
+.badge-new {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--primary-glow);
+    padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold;
+    box-shadow: 0 5px 15px rgba(255, 61, 119, 0.4); z-index: 2;
+}
+.img-error { object-fit: contain !important; padding: 40px; background: #111; }
+
+/* --- 5. PLAYER PAGE LAYOUT --- */
 .watch-container {
-    display: grid;
-    grid-template-columns: 3fr 1fr; /* 75% Video, 25% Sidebar */
-    gap: 20px;
+    display: grid; grid-template-columns: 3fr 1fr; gap: 30px;
 }
 
+/* Video Player Box */
+.video-wrapper {
+    background: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    padding: 10px; border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
 .video-container {
-    position: relative;
-    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-    height: 0;
-    background: black;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    position: relative; padding-bottom: 56.25%; height: 0;
+    border-radius: 12px; overflow: hidden; background: black;
 }
+.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-.video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
+.video-meta { margin-top: 25px; padding: 0 10px; }
+.video-meta h2 { font-size: 2rem; background: linear-gradient(to right, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
 
-.video-info {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #1f1f1f;
-    border-radius: 8px;
-}
-
-/* --- WATCH PAGE: Sidebar --- */
+/* Sidebar Glass Panel */
 .sidebar {
-    background-color: #1f1f1f;
-    padding: 15px;
-    border-radius: 8px;
-    height: 600px; /* Fixed height sidebar */
-    display: flex;
-    flex-direction: column;
-}
-
-.divider {
-    border: 0;
-    border-top: 1px solid #333;
-    margin: 15px 0;
+    background: rgba(20, 20, 20, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 20px;
+    height: 700px;
+    display: flex; flex-direction: column;
 }
 
 /* Season Tabs */
-.season-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
+.season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); margin-bottom: 15px; }
 .season-btn {
-    padding: 6px 10px;
-    background-color: #333;
-    color: #ccc;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    transition: 0.2s;
+    background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);
+    padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.3s;
 }
-
-.season-btn:hover { background-color: #555; }
-
-.season-btn.active-season {
-    background-color: #e50914;
-    color: white;
-    font-weight: bold;
-}
+.season-btn:hover { color: white; border-color: white; }
+.season-btn.active-season { background: white; color: black; font-weight: bold; border-color: white; }
 
 /* Episode List */
-.episode-list {
-    overflow-y: auto; /* Scrollable */
-    flex-grow: 1;
-    padding-right: 5px;
-}
-
-/* Scrollbar Styling */
-.episode-list::-webkit-scrollbar { width: 8px; }
-.episode-list::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+.episode-list { overflow-y: auto; flex: 1; padding-right: 5px; }
+.episode-list::-webkit-scrollbar { width: 5px; }
+.episode-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
 .ep-btn {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 8px;
-    background-color: #2a2a2a;
-    color: white;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.2s;
+    width: 100%; text-align: left; padding: 15px; margin-bottom: 8px;
+    background: rgba(255,255,255,0.03); border: 1px solid transparent;
+    border-radius: 12px; color: #ddd; cursor: pointer; transition: 0.2s;
+    display: flex; align-items: center;
 }
-
-.ep-btn:hover { background-color: #444; }
-
+.ep-btn:before { content: '▶'; font-size: 0.7rem; margin-right: 10px; color: #555; }
+.ep-btn:hover { background: rgba(255,255,255,0.08); padding-left: 20px; }
 .ep-btn.active {
-    background-color: #e50914;
-    font-weight: bold;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), transparent);
+    border-left: 3px solid #8B5CF6; color: white;
 }
+.ep-btn.active:before { color: #8B5CF6; }
 
-/* Mobile Responsiveness */
+/* Mobile */
 @media (max-width: 900px) {
     .watch-container { grid-template-columns: 1fr; }
-    .sidebar { height: auto; max-height: 500px; }
+    .sidebar { height: 500px; }
+    nav { width: 95%; top: 10px; }
 }
 
-/* "NEW" Badge Styling */
-.badge-new {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #e50914;
-    color: white;
-    padding: 5px 10px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    z-index: 10;
+/* --- USER PROFILE STYLES --- */
+.user-actions { display: flex; align-items: center; gap: 15px; }
+
+.glass-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    color: white; padding: 8px 16px; border-radius: 20px;
+    cursor: pointer; transition: 0.3s;
+}
+.glass-btn:hover { background: white; color: black; }
+
+.user-profile { position: relative; cursor: pointer; }
+
+#user-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid #8B5CF6;
+    transition: 0.3s;
 }
 
-/* Ensure the card can hold the absolute badge */
-.anime-card {
-    position: relative; 
-    /* ... your existing styles ... */
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute; top: 50px; right: 0;
+    background: rgba(10, 10, 10, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 15px; border-radius: 12px;
+    width: 150px; display: none; /* Hidden by default */
+    flex-direction: column;
 }
+.user-profile:hover .dropdown-menu { display: flex; }
 
-/* Fix Select2 Dark Mode */
-.select2-container .select2-selection--single {
-    height: 38px !important;
-    background-color: #222 !important;
-    border: 1px solid #444 !important;
-    color: white !important;
-}
-.select2-selection__rendered {
-    color: white !important;
-    line-height: 36px !important;
-}
-.select2-dropdown {
-    background-color: #222 !important;
-    border: 1px solid #444 !important;
-    color: white !important;
-}
-.select2-search__field {
-    background-color: #333 !important;
-    color: white !important;
+.dropdown-menu button {
+    background: transparent; border: none; color: #ff4d4d;
+    text-align: left; cursor: pointer; padding-top: 5px;
 }

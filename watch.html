@@ -3,44 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watching Anime</title>
+    <title>Watching - AniStream</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
     <nav>
-        <div class="logo"><a href="index.html">AniStream</a></div>
+        <div class="logo"><a href="index.html" style="text-decoration: none; color: inherit;">AniStream</a></div>
         <a href="index.html" class="back-btn">← Back to Home</a>
     </nav>
 
     <div class="container watch-container">
         
-        <main class="player-section">
-            <div class="video-container">
-                <iframe id="video-player" src="" frameborder="0" allowfullscreen></iframe>
+        <main>
+            <div class="video-wrapper">
+                <div class="video-container">
+                    <iframe id="video-player" src="" frameborder="0" allowfullscreen></iframe>
+                </div>
             </div>
-            <div class="video-info">
-                <h2 id="anime-title">Loading...</h2>
-                <h3 id="ep-title" style="color: #bbb; margin-top: 5px;">Select an Episode</h3>
+            <div class="video-meta">
+                <h2 id="anime-title">Loading Anime...</h2>
+                <h3 id="ep-title" style="color: #888; font-weight: 400; font-size: 1.1rem; margin-top: 5px;">Select an episode</h3>
             </div>
         </main>
 
         <aside class="sidebar">
-            <h3>Select Season</h3>
             <div id="season-tabs" class="season-tabs">
                 </div>
             
-            <hr class="divider">
-
-            <h3>Episodes</h3>
             <div id="episode-list-container" class="episode-list">
                 </div>
         </aside>
 
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
