@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My List - AniStream</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">AniStream</a>
+        <div class="user-actions">
+            <a href="index.html" class="glass-btn">Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="section-title">My List ❤️</h1>
+        
+        <div class="grid" id="mylist-grid">
+            <h3 style="color: #666; font-weight: 400;">Loading your list...</h3>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // Wait for auth to check user
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                loadMyList(user.uid);
+            } else {
+                document.getElementById('mylist-grid').innerHTML = "<h3>Please Login to view your list.</h3>";
+            }
+        });
+
+        function loadMyList(uid) {
+            const grid = document.getElementById('mylist-grid');
+            
+            db.collection('users').doc(uid).collection('mylist').orderBy('timestamp', 'desc').get().then(snapshot => {
+                grid.innerHTML = ""; // Clear loading text
+                
+                if(snapshot.empty) {
+                    grid.innerHTML = "<h3 style='color:#666;'>Your list is empty. Go add some anime!</h3>";
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Re-use the createCard function from script.js
+                    // We pass {id, ...data} just like the homepage
+                    grid.appendChild(createCard({ id: doc.id, ...data }));
+                });
+            });
+        }
+    </script>
+</body>
+</html>

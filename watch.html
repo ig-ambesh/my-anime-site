@@ -22,9 +22,27 @@
                 </div>
             </div>
             
-            <div style="margin-top: 20px; margin-bottom: 20px;">
-                <h2 id="anime-title" style="font-size: 2rem;">Loading...</h2>
-                <h3 id="ep-title" style="color: #888; font-weight: 400;">Select an episode</h3>
+            <div style="margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h2 id="anime-title" style="font-size: 2rem;">Loading...</h2>
+                    <h3 id="ep-title" style="color: #888; font-weight: 400;">Select an episode</h3>
+                </div>
+                
+                <button id="mylist-btn" onclick="toggleMyList()" style="
+                    background: rgba(255,255,255,0.1); 
+                    border: 1px solid rgba(255,255,255,0.2); 
+                    color: white; 
+                    padding: 12px 20px; 
+                    border-radius: 50px; 
+                    cursor: pointer; 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 10px; 
+                    font-weight: 600;
+                    transition: 0.3s;
+                ">
+                    <i class="far fa-heart" id="mylist-icon"></i> <span id="mylist-text">Add to List</span>
+                </button>
             </div>
 
             <div class="comments-wrapper">

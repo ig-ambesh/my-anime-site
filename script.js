@@ -220,6 +220,8 @@ if (player) {
     }
 
     function setupPlayer(content, id) {
+        currentAnimeData = content;
+        checkMyListStatus(id);
         document.getElementById('anime-title').innerText = content.title;
         const sTabs = document.getElementById('season-tabs');
         const epList = document.getElementById('episode-list-container');
@@ -340,4 +342,70 @@ function loadGiscus(animeId, seasonIndex, episodeIndex) {
 
         container.appendChild(script);
     }
+}
+
+// ==========================================
+// 8. MY LIST SYSTEM (Favorites)
+// ==========================================
+let currentAnimeData = null; // Store data to save later
+
+// 1. Check if Anime is already in My List
+function checkMyListStatus(animeId) {
+    if (!currentUser) return; // Not logged in? Do nothing.
+
+    const btn = document.getElementById('mylist-btn');
+    const icon = document.getElementById('mylist-icon');
+    const text = document.getElementById('mylist-text');
+    
+    // Check Firebase
+    db.collection('users').doc(currentUser.uid).collection('mylist').doc(animeId).get()
+    .then(doc => {
+        if (doc.exists) {
+            // It IS in the list -> Show "Remove" style
+            btn.style.background = "#FF3D77"; // Pink
+            btn.style.borderColor = "#FF3D77";
+            icon.classList.remove('far'); // Empty heart
+            icon.classList.add('fas');    // Solid heart
+            text.innerText = "In My List";
+        } else {
+            // Not in list -> Show default style
+            btn.style.background = "rgba(255,255,255,0.1)";
+            icon.classList.remove('fas');
+            icon.classList.add('far');
+            text.innerText = "Add to List";
+        }
+    });
+}
+
+// 2. The Toggle Function (Add/Remove)
+function toggleMyList() {
+    if (!currentUser) return alert("Please Login to use My List!");
+    
+    const params = new URLSearchParams(window.location.search);
+    const animeId = params.get('anime');
+    const btn = document.getElementById('mylist-btn');
+
+    // We need the data we loaded earlier
+    if (!currentAnimeData || !animeId) return;
+
+    const docRef = db.collection('users').doc(currentUser.uid).collection('mylist').doc(animeId);
+
+    docRef.get().then(doc => {
+        if (doc.exists) {
+            // REMOVE IT
+            docRef.delete().then(() => {
+                checkMyListStatus(animeId); // Reset button UI
+            });
+        } else {
+            // ADD IT
+            docRef.set({
+                title: currentAnimeData.title,
+                image: currentAnimeData.image,
+                type: currentAnimeData.type,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                checkMyListStatus(animeId); // Update button UI
+            });
+        }
+    });
 }
