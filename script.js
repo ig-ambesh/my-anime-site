@@ -280,20 +280,21 @@ if (player) {
 }
 
 // ==========================================
-// 7. GISCUS COMMENTS (Smart Reload Fix)
+// 7. GISCUS COMMENTS (Stable ID Fix)
 // ==========================================
-function loadGiscus(animeId, episodeTitle) {
+function loadGiscus(animeId, seasonIndex, episodeIndex) {
     const container = document.getElementById('comments-section');
     const iframe = document.querySelector('iframe.giscus-frame');
     
-    // 1. GENERATE UNIQUE ID (THE "TERM")
-    // Creates a safe ID like: "attack_on_titan_ep_2"
-    const term = animeId + "_" + episodeTitle.replace(/[^a-zA-Z0-9]/g, '_');
+    // 1. GENERATE A STABLE ID (e.g., "naruto_s0_e1")
+    // This ignores the title text, so comments never get lost.
+    const term = `${animeId}_s${seasonIndex}_e${episodeIndex}`;
+    
+    console.log("Loading Comments for ID:", term); // Check Console (F12) if issues persist
 
     // 2. CHECK IF GISCUS IS ALREADY LOADED
     if (iframe) {
-        // OPTION A: It's already there -> Just update the settings!
-        // This is the "Hot Reload" trick
+        // Hot Reload (Fast Switch)
         iframe.contentWindow.postMessage({
             giscus: {
                 setConfig: {
@@ -308,9 +309,7 @@ function loadGiscus(animeId, episodeTitle) {
         }, 'https://giscus.app');
         
     } else {
-        // OPTION B: First time loading? -> Inject the Script
-        
-        // Reset Container
+        // Initial Load
         container.innerHTML = `
             <div class="comments-header">
                 <h3 class="comments-title">Discussion</h3>
@@ -321,15 +320,15 @@ function loadGiscus(animeId, episodeTitle) {
         const script = document.createElement('script');
         script.src = "https://giscus.app/client.js";
 
-        // ⚠️ PASTE YOUR KEYS HERE AGAIN ⚠️
+        // ⚠️ PASTE YOUR KEYS HERE ⚠️
         script.setAttribute("data-repo", "ig-ambesh/my-website-comments");
-        script.setAttribute("data-repo-id", "R_kgDOQwo8og");  // <-- Paste ID here
+        script.setAttribute("data-repo-id", "R_kgDOQwo8og");
         script.setAttribute("data-category", "General");
-        script.setAttribute("data-category-id", "DIC_kwDOQwo8os4C0Wk9"); // <-- Paste ID here
+        script.setAttribute("data-category-id", "DIC_kwDOQwo8os4C0Wk9");
 
-        // Standard Settings
+        // Settings
         script.setAttribute("data-mapping", "pathname");
-        script.setAttribute("data-term", term); // <--- Uses the Term we created
+        script.setAttribute("data-term", term); // <--- Uses stable ID
         script.setAttribute("data-strict", "0");
         script.setAttribute("data-reactions-enabled", "1");
         script.setAttribute("data-emit-metadata", "0");
