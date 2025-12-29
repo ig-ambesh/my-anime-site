@@ -1,0 +1,223 @@
+/* --- Base Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* --- Navigation --- */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    background-color: #1f1f1f;
+    border-bottom: 2px solid #e50914;
+}
+
+/* Search Bar Styling */
+.search-input {
+    padding: 10px 15px;
+    width: 300px;
+    border-radius: 20px;
+    border: none;
+    background-color: #333;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: width 0.3s ease, background 0.3s;
+}
+
+.search-input::placeholder {
+    color: #bbb;
+}
+
+.search-input:focus {
+    background-color: #444;
+    width: 350px; /* Expands slightly when clicked */
+    box-shadow: 0 0 5px rgba(229, 9, 20, 0.5);
+}
+
+/* Mobile Search Styling */
+@media (max-width: 600px) {
+    .search-input {
+        width: 150px;
+        font-size: 0.8rem;
+    }
+    .search-input:focus {
+        width: 180px;
+    }
+}
+
+.logo, .logo a {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e50914;
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+
+.back-btn {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.back-btn:hover { color: white; }
+
+/* --- Layout Containers --- */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* --- HOME PAGE: Grid --- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.anime-card {
+    background-color: #1f1f1f;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.anime-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+}
+
+.anime-card img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 15px;
+    text-align: center;
+}
+
+/* --- WATCH PAGE: Player --- */
+.watch-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr; /* 75% Video, 25% Sidebar */
+    gap: 20px;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    background: black;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.video-info {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #1f1f1f;
+    border-radius: 8px;
+}
+
+/* --- WATCH PAGE: Sidebar --- */
+.sidebar {
+    background-color: #1f1f1f;
+    padding: 15px;
+    border-radius: 8px;
+    height: 600px; /* Fixed height sidebar */
+    display: flex;
+    flex-direction: column;
+}
+
+.divider {
+    border: 0;
+    border-top: 1px solid #333;
+    margin: 15px 0;
+}
+
+/* Season Tabs */
+.season-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.season-btn {
+    padding: 6px 10px;
+    background-color: #333;
+    color: #ccc;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: 0.2s;
+}
+
+.season-btn:hover { background-color: #555; }
+
+.season-btn.active-season {
+    background-color: #e50914;
+    color: white;
+    font-weight: bold;
+}
+
+/* Episode List */
+.episode-list {
+    overflow-y: auto; /* Scrollable */
+    flex-grow: 1;
+    padding-right: 5px;
+}
+
+/* Scrollbar Styling */
+.episode-list::-webkit-scrollbar { width: 8px; }
+.episode-list::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+
+.ep-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 8px;
+    background-color: #2a2a2a;
+    color: white;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.ep-btn:hover { background-color: #444; }
+
+.ep-btn.active {
+    background-color: #e50914;
+    font-weight: bold;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 900px) {
+    .watch-container { grid-template-columns: 1fr; }
+    .sidebar { height: auto; max-height: 500px; }
+}
