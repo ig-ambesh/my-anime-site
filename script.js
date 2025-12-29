@@ -11,7 +11,7 @@ const firebaseConfig = {
   appId: "1:364571969552:web:aed0d2e751b443ddd4e295"
 };
 
-// Initialize Firebase
+// Initialize
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
@@ -22,14 +22,11 @@ const provider = new firebase.auth.GoogleAuthProvider();
 let currentUser = null;
 
 // ==========================================
-// 2. AUTHENTICATION (Login/Logout)
+// 2. AUTHENTICATION
 // ==========================================
 function googleLogin() {
     auth.signInWithPopup(provider)
-        .then((result) => {
-            console.log("Logged in:", result.user);
-            location.reload();
-        })
+        .then(() => location.reload())
         .catch((error) => console.error(error));
 }
 
@@ -37,7 +34,6 @@ function logout() {
     auth.signOut().then(() => location.reload());
 }
 
-// Check Login Status
 auth.onAuthStateChanged((user) => {
     const loginBtn = document.getElementById('login-btn');
     const profile = document.getElementById('user-profile');
@@ -48,7 +44,7 @@ auth.onAuthStateChanged((user) => {
         if(profile) {
             profile.style.display = 'block';
             document.getElementById('user-avatar').src = user.photoURL;
-            document.getElementById('user-name').innerText = user.displayName.split(" ")[0]; // First Name
+            document.getElementById('user-name').innerText = user.displayName.split(" ")[0];
         }
         loadHistory();
     } else {
@@ -58,7 +54,7 @@ auth.onAuthStateChanged((user) => {
 });
 
 // ==========================================
-// 3. HOME PAGE LOGIC (Grid & Slider)
+// 3. HOME PAGE (GRID & SLIDER)
 // ==========================================
 const grid = document.getElementById('anime-grid');
 const searchBar = document.getElementById('search-bar');
@@ -68,12 +64,11 @@ if (grid) {
         let allContent = [];
         snapshot.forEach(doc => allContent.push({ id: doc.id, ...doc.data() }));
 
-        // --- A. SLIDER LOGIC ---
-        // Filter: Must have Banner URL + 'featured' checkbox true
+        // A. SLIDER LOGIC
         const sliderContent = allContent.filter(item => item.banner && item.featured === true);
         if (sliderContent.length > 0) initSlider(sliderContent);
 
-        // --- B. GRID LOGIC ---
+        // B. GRID LOGIC
         function renderGrid(filterText = "") {
             grid.innerHTML = "";
             allContent.forEach(item => {
@@ -82,86 +77,66 @@ if (grid) {
                 }
             });
         }
-        
-        // Initial Render
         renderGrid();
-        
-        // Search Listener
-        if(searchBar) {
-            searchBar.addEventListener('input', (e) => renderGrid(e.target.value));
-        }
+        if(searchBar) searchBar.addEventListener('input', (e) => renderGrid(e.target.value));
     });
 }
 
-// --- HELPER: Create Card HTML ---
 function createCard(item, customSubtitle = null) {
     const card = document.createElement('div');
     card.classList.add('anime-card');
 
-    // 1. Badge: New Episode (Only for Series, < 3 days old)
+    // Badges
     let badgeHTML = "";
     if (item.lastUpdated && !customSubtitle && item.type !== 'movie') {
         const days = (new Date() - item.lastUpdated.toDate()) / (1000 * 3600 * 24);
         if (days < 3) badgeHTML = `<div class="badge-new">NEW EP</div>`;
     }
 
-    // 2. Badge: Language (Top Left)
     let langHTML = "";
     if (item.language) {
         let colorClass = "";
         if(item.language.includes("Dub")) colorClass = "lang-dub";
         if(item.language.includes("Hindi")) colorClass = "lang-hindi";
-        langHTML = `<div class="badge-lang ${colorClass}" style="position:absolute; top:10px; left:10px; background:rgba(0,0,0,0.7); padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:bold; z-index:2; color:white;">${item.language}</div>`;
+        langHTML = `<div class="badge-lang ${colorClass}">${item.language}</div>`;
     }
 
-    // 3. Badge: Type (Movie vs Series) - Bottom Right
-    const typeText = item.type === 'movie' ? 'MOVIE' : 'SERIES';
-    const typeBadge = `<div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.8); padding:2px 6px; border-radius:4px; font-size:0.6rem; z-index:2; border:1px solid rgba(255,255,255,0.3); color:#ccc;">${typeText}</div>`;
-
-    // 4. Subtitle Logic
+    // Subtitle
     let sub = customSubtitle;
     if (!sub) {
-        // If no custom subtitle, show Season count or "Full Movie"
         sub = item.type === 'movie' ? 'Watch Now' : `${item.seasons ? item.seasons.length : 0} Seasons`;
     }
 
     card.innerHTML = `
         ${badgeHTML}
         ${langHTML}
-        ${typeBadge}
         <img src="${item.image}" onerror="this.src='https://wallpapercave.com/wp/wp2326757.jpg'">
         <div class="card-info">
             <h3>${item.title}</h3>
-            <p style="color:#8B5CF6">${sub}</p>
+            <p>${sub}</p>
         </div>
     `;
-    
     card.onclick = () => window.location.href = `watch.html?anime=${item.id}`;
     return card;
 }
 
 // ==========================================
-// 4. HERO SLIDER FUNCTION
+// 4. HERO SLIDER LOGIC
 // ==========================================
 function initSlider(items) {
     const wrapper = document.getElementById('hero-slider');
     const dots = document.getElementById('slider-dots');
-    
-    // Get Arrows (Make sure these exist in your index.html)
     const prevBtn = document.querySelector('.prev');
     const nextBtn = document.querySelector('.next');
 
-    // Settings
     const MAX_SLIDES = 5;
     const featured = items.slice(0, MAX_SLIDES);
     let current = 0;
 
-    // Create Slides
     featured.forEach((item, index) => {
         const slide = document.createElement('div');
         slide.classList.add('slide');
         if (index === 0) slide.classList.add('active');
-        
         slide.style.backgroundImage = `url('${item.banner}')`;
         
         slide.innerHTML = `
@@ -171,17 +146,14 @@ function initSlider(items) {
                 <button class="watch-now-btn" onclick="window.location.href='watch.html?anime=${item.id}'">
                     <i class="fas fa-play"></i> Watch Now
                 </button>
-            </div>
-        `;
+            </div>`;
         wrapper.appendChild(slide);
 
-        // Create Dots
         const dot = document.createElement('div');
         dot.classList.add('dot');
         if(index === 0) dot.classList.add('active');
         dot.style.cssText = "width:10px; height:10px; background:rgba(255,255,255,0.3); border-radius:50%; cursor:pointer; transition:0.3s;";
         if(index === 0) dot.style.background = "white";
-        
         dot.onclick = () => showSlide(index);
         dots.appendChild(dot);
     });
@@ -189,25 +161,18 @@ function initSlider(items) {
     function showSlide(index) {
         const slides = document.querySelectorAll('.slide');
         const allDots = document.querySelectorAll('.dot');
-        
-        // Loop Logic
         if (index >= featured.length) current = 0;
         else if (index < 0) current = featured.length - 1;
         else current = index;
 
-        // Reset All
         slides.forEach(s => s.classList.remove('active'));
         allDots.forEach(d => d.style.background = "rgba(255,255,255,0.3)");
-
-        // Activate Current
         slides[current].classList.add('active');
         allDots[current].style.background = "white";
     }
 
-    // Auto Play & Controls
     if(featured.length > 1) {
-        let interval = setInterval(() => showSlide(current + 1), 5000); // 5 Seconds
-
+        let interval = setInterval(() => showSlide(current + 1), 5000);
         if(prevBtn) prevBtn.onclick = () => { showSlide(current - 1); clearInterval(interval); interval = setInterval(() => showSlide(current + 1), 5000); };
         if(nextBtn) nextBtn.onclick = () => { showSlide(current + 1); clearInterval(interval); interval = setInterval(() => showSlide(current + 1), 5000); };
     } else {
@@ -220,25 +185,19 @@ function initSlider(items) {
 // 5. HISTORY LOGIC
 // ==========================================
 function loadHistory() {
-    if(!grid || !currentUser) return; // Only run on home page if logged in
-    
+    if(!grid || !currentUser) return;
     const section = document.getElementById('continue-watching-section');
     const hGrid = document.getElementById('history-grid');
 
     db.collection('users').doc(currentUser.uid).collection('history')
-      .orderBy('timestamp', 'desc').limit(4)
-      .get().then(snap => {
+      .orderBy('timestamp', 'desc').limit(4).get().then(snap => {
           if(!snap.empty) {
               section.style.display = 'block';
               hGrid.innerHTML = "";
               snap.forEach(doc => {
                   const d = doc.data();
-                  // Create card with "Ep: X" subtitle
                   hGrid.appendChild(createCard({
-                      id: doc.id,
-                      title: d.animeTitle,
-                      image: d.animeImage,
-                      type: d.type // Pass type to handle badges
+                      id: doc.id, title: d.animeTitle, image: d.animeImage, type: d.type
                   }, d.lastEpisode));
               });
           }
@@ -246,7 +205,7 @@ function loadHistory() {
 }
 
 // ==========================================
-// 6. PLAYER PAGE LOGIC (Universal: Movie & Series)
+// 6. PLAYER LOGIC (Universal)
 // ==========================================
 const player = document.getElementById('video-player');
 
@@ -256,9 +215,7 @@ if (player) {
 
     if (contentId) {
         db.collection("animes").doc(contentId).get().then(doc => {
-            if (doc.exists) {
-                setupPlayer(doc.data(), contentId);
-            }
+            if (doc.exists) setupPlayer(doc.data(), contentId);
         });
     }
 
@@ -266,33 +223,24 @@ if (player) {
         document.getElementById('anime-title').innerText = content.title;
         const sTabs = document.getElementById('season-tabs');
         const epList = document.getElementById('episode-list-container');
-        
-        // Layout Elements
         const sidebar = document.querySelector('.sidebar');
         const watchContainer = document.querySelector('.watch-container');
 
-        // --- SCENARIO A: IT IS A MOVIE ---
+        // --- MOVIE MODE ---
         if (content.type === 'movie') {
-            // 1. Play Video
             player.src = content.videoUrl;
             document.getElementById('ep-title').innerText = "Full Movie";
-            
-            // 2. Apply Movie Layout Class (Fixes Mobile Issue)
             if(watchContainer) watchContainer.classList.add('movie-mode');
-            if(sidebar) sidebar.style.display = 'none'; // Double check hidden
-
-            // 3. Save History
+            if(sidebar) sidebar.style.display = 'none';
             saveHistory(id, content, "Movie");
-            return; 
+            loadGiscus(id, "Full Movie");
+            return;
         }
 
-        // --- SCENARIO B: IT IS A SERIES ---
-        // 1. Reset Layout (Remove Movie Class)
+        // --- SERIES MODE ---
         if(watchContainer) watchContainer.classList.remove('movie-mode');
         if(sidebar) sidebar.style.display = 'flex';
 
-        // 2. Load Seasons
-        sTabs.innerHTML = ""; // Clear old tabs
         content.seasons.forEach((season, index) => {
             const btn = document.createElement('button');
             btn.classList.add('season-btn');
@@ -300,8 +248,6 @@ if (player) {
             btn.onclick = () => loadEpisodes(index);
             sTabs.appendChild(btn);
         });
-
-        // 3. Load First Season
         if(content.seasons.length > 0) loadEpisodes(0);
 
         function loadEpisodes(seasonIndex) {
@@ -310,13 +256,13 @@ if (player) {
                 const btn = document.createElement('div');
                 btn.classList.add('ep-btn');
                 btn.innerText = ep.title;
-                
                 btn.onclick = () => {
                     player.src = ep.url;
                     document.getElementById('ep-title').innerText = ep.title;
                     document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     saveHistory(id, content, `Ep: ${ep.title}`);
+                    loadGiscus(id, ep.title);
                 };
                 epList.appendChild(btn);
             });
@@ -326,12 +272,73 @@ if (player) {
     function saveHistory(id, content, progressText) {
         if(currentUser) {
             db.collection('users').doc(currentUser.uid).collection('history').doc(id).set({
-                animeTitle: content.title,
-                animeImage: content.image,
-                lastEpisode: progressText,
-                type: content.type || 'series', // Save type for badge logic later
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                animeTitle: content.title, animeImage: content.image, lastEpisode: progressText,
+                type: content.type || 'series', timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
         }
+    }
+}
+
+// ==========================================
+// 7. GISCUS COMMENTS (Smart Reload Fix)
+// ==========================================
+function loadGiscus(animeId, episodeTitle) {
+    const container = document.getElementById('comments-section');
+    const iframe = document.querySelector('iframe.giscus-frame');
+    
+    // 1. GENERATE UNIQUE ID (THE "TERM")
+    // Creates a safe ID like: "attack_on_titan_ep_2"
+    const term = animeId + "_" + episodeTitle.replace(/[^a-zA-Z0-9]/g, '_');
+
+    // 2. CHECK IF GISCUS IS ALREADY LOADED
+    if (iframe) {
+        // OPTION A: It's already there -> Just update the settings!
+        // This is the "Hot Reload" trick
+        iframe.contentWindow.postMessage({
+            giscus: {
+                setConfig: {
+                    term: term,
+                    reactionsEnabled: '1',
+                    emitMetadata: '0',
+                    inputPosition: 'top',
+                    theme: 'transparent_dark',
+                    lang: 'en'
+                }
+            }
+        }, 'https://giscus.app');
+        
+    } else {
+        // OPTION B: First time loading? -> Inject the Script
+        
+        // Reset Container
+        container.innerHTML = `
+            <div class="comments-header">
+                <h3 class="comments-title">Discussion</h3>
+            </div>
+            <div class="giscus"></div>
+        `;
+
+        const script = document.createElement('script');
+        script.src = "https://giscus.app/client.js";
+
+        // ⚠️ PASTE YOUR KEYS HERE AGAIN ⚠️
+        script.setAttribute("data-repo", "ig-ambesh/my-website-comments");
+        script.setAttribute("data-repo-id", "R_kgDOQwo8og");  // <-- Paste ID here
+        script.setAttribute("data-category", "General");
+        script.setAttribute("data-category-id", "DIC_kwDOQwo8os4C0Wk9"); // <-- Paste ID here
+
+        // Standard Settings
+        script.setAttribute("data-mapping", "pathname");
+        script.setAttribute("data-term", term); // <--- Uses the Term we created
+        script.setAttribute("data-strict", "0");
+        script.setAttribute("data-reactions-enabled", "1");
+        script.setAttribute("data-emit-metadata", "0");
+        script.setAttribute("data-input-position", "bottom");
+        script.setAttribute("data-theme", "transparent_dark");
+        script.setAttribute("data-lang", "en");
+        script.setAttribute("crossorigin", "anonymous");
+        script.async = true;
+
+        container.appendChild(script);
     }
 }

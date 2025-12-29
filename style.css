@@ -1,4 +1,6 @@
-/* --- 1. GLOBAL VARIABLES & RESET --- */
+/* =========================================
+   1. GLOBAL VARIABLES & RESET
+   ========================================= */
 :root {
     --bg-color: #050505;
     --glass-surface: rgba(255, 255, 255, 0.03);
@@ -21,7 +23,9 @@ body {
     background-attachment: fixed;
 }
 
-/* --- 2. FLOATING NAVBAR --- */
+/* =========================================
+   2. FLOATING NAVBAR
+   ========================================= */
 nav {
     display: flex; justify-content: space-between; align-items: center;
     padding: 15px 5%; position: sticky; top: 20px; z-index: 100;
@@ -63,7 +67,9 @@ nav {
 .user-profile:hover .dropdown-menu { display: flex; }
 .dropdown-menu button { background: transparent; border: none; color: #ff4d4d; text-align: left; cursor: pointer; padding-top: 5px; }
 
-/* --- 3. HERO SLIDER --- */
+/* =========================================
+   3. HERO SLIDER & ARROWS
+   ========================================= */
 .hero-container {
     position: relative; width: 90%; max-width: 1600px; margin: 30px auto;
     height: 450px; border-radius: 20px; overflow: hidden;
@@ -76,18 +82,15 @@ nav {
     background-size: cover; background-position: center;
 }
 .slide.active { opacity: 1; z-index: 1; }
-/* Dark Overlay to make text visible */
 .slide::after { 
     content: ''; position: absolute; inset: 0; 
     background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
     z-index: 2; 
 }
-
 .slide-content {
-    position: relative; z-index: 5; /* Sit on top of overlay */
+    position: relative; z-index: 5;
     top: 50%; transform: translateY(-50%);
-    left: 50px; max-width: 500px;
-    color: white;
+    left: 50px; max-width: 500px; color: white;
 }
 .slide-title { 
     font-size: 3rem; font-weight: 800; margin-bottom: 10px; line-height: 1.1; 
@@ -97,52 +100,28 @@ nav {
 .watch-now-btn {
     padding: 12px 30px; background: var(--accent-color); color: white;
     border: none; border-radius: 30px; font-weight: bold; cursor: pointer;
-    box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
+    box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4); transition: 0.3s;
 }
+.watch-now-btn:hover { background: white; color: black; }
 
-/* --- GLASS SLIDER ARROWS --- */
-/* --- GLASS SLIDER ARROWS (HOVER EFFECT) --- */
 .slider-btn {
-    position: absolute; top: 50%; 
-    /* Move slightly outward by default for animation effect */
-    transform: translateY(-50%) scale(0.9);
-    
+    position: absolute; top: 50%; transform: translateY(-50%) scale(0.9);
     width: 50px; height: 50px;
-    background: rgba(255, 255, 255, 0.15); 
-    backdrop-filter: blur(10px); 
+    background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); 
     border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white; border-radius: 50%;
-    cursor: pointer; z-index: 10;
-    
+    color: white; border-radius: 50%; cursor: pointer; z-index: 10;
     display: flex; justify-content: center; align-items: center;
-    font-size: 1.2rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-
-    /* HIDDEN BY DEFAULT */
-    opacity: 0; 
-    pointer-events: none; /* Prevents accidental clicks when hidden */
-    transition: all 0.3s ease-in-out;
+    font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    opacity: 0; pointer-events: none; transition: all 0.3s ease-in-out;
 }
-
 .prev { left: 20px; }
 .next { right: 20px; }
+.hero-container:hover .slider-btn { opacity: 1; pointer-events: all; transform: translateY(-50%) scale(1); }
+.slider-btn:hover { background: rgba(255, 255, 255, 0.4); transform: translateY(-50%) scale(1.1) !important; }
 
-/* SHOW WHEN HOVERING THE BANNER */
-.hero-container:hover .slider-btn {
-    opacity: 1;
-    pointer-events: all; /* Re-enable clicking */
-    transform: translateY(-50%) scale(1); /* Smooth pop-in animation */
-}
-
-/* GLOW ON HOVERING THE BUTTON ITSELF */
-.slider-btn:hover {
-    background: rgba(255, 255, 255, 0.4); 
-    border-color: white;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-    transform: translateY(-50%) scale(1.1) !important;
-}
-
-/* --- 4. GRID & CARDS --- */
+/* =========================================
+   4. GRID, CARDS & BADGES
+   ========================================= */
 .container { max-width: 1400px; margin: 40px auto; padding: 0 20px; }
 h1.section-title { font-size: 2rem; margin-bottom: 30px; font-weight: 600; border-left: 4px solid #FF3D77; padding-left: 15px; }
 
@@ -167,8 +146,20 @@ h1.section-title { font-size: 2rem; margin-bottom: 30px; font-weight: 600; borde
     padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold;
     box-shadow: 0 5px 15px rgba(255, 9, 20, 0.4); z-index: 2;
 }
+.badge-lang {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff; padding: 4px 8px; border-radius: 6px; 
+    font-size: 0.7rem; font-weight: bold; text-transform: uppercase;
+    z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+.lang-dub { background: #8B5CF6; }
+.lang-hindi { background: #F59E0B; }
 
-/* --- 5. PLAYER PAGE --- */
+/* =========================================
+   5. PLAYER PAGE & COMMENTS
+   ========================================= */
 .watch-container { display: grid; grid-template-columns: 3fr 1fr; gap: 30px; }
 .video-wrapper {
     background: var(--glass-surface); border: 1px solid var(--glass-border);
@@ -196,63 +187,83 @@ h1.section-title { font-size: 2rem; margin-bottom: 30px; font-weight: 600; borde
 }
 .ep-btn.active { background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), transparent); border-left: 3px solid #8B5CF6; color: white; }
 
-/* MOBILE */
+/* --- COMMENTS SECTION (Desktop: Wide & Premium) --- */
+.comments-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#comments-section {
+    /* (Keep your existing width/margin/background settings) */
+    width: 95%; 
+    max-width: 1100px !important;
+    margin-top: 30px;
+    margin-bottom: 60px;
+    max-height: 700px; /* Taller for Giscus */
+    overflow-y: auto;
+    
+    background: rgba(0, 0, 0, 0.6); 
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 20px; /* Reduced padding for Giscus */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollbar Styling */
+#comments-section::-webkit-scrollbar { width: 8px; }
+#comments-section::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+#comments-section::-webkit-scrollbar-track { background: transparent; }
+
+.comments-header {
+    display: flex; align-items: center; 
+    margin-bottom: 20px; padding-bottom: 15px; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+}
+.comments-title { 
+    font-size: 1.3rem; font-weight: 700; color: #fff; 
+    border-left: 4px solid #8B5CF6; padding-left: 15px; 
+}
+
+/* --- MOBILE SPECIFIC OVERRIDES --- */
+@media (max-width: 768px) {
+    #comments-section {
+        max-width: 100% !important; /* Full width on phone */
+        width: 100% !important;     
+        padding: 15px !important;   /* Less padding = More text space */
+        margin-top: 20px;
+        border-radius: 12px;
+    }
+    
+    /* Add tiny gap on sides of screen */
+    .comments-wrapper {
+        padding: 0 10px; 
+    }
+
+    .comments-title {
+        font-size: 1.1rem; /* Smaller title on phone */
+    }
+}
+
+/* =========================================
+   6. MOBILE RESPONSIVE FIXES
+   ========================================= */
+/* Movie Mode Class (Added by JS) */
+.watch-container.movie-mode { grid-template-columns: 1fr; }
+.watch-container.movie-mode .sidebar { display: none; }
+
 @media (max-width: 900px) {
     .grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-    .watch-container { grid-template-columns: 1fr; }
-    .sidebar { height: 400px; }
+    
+    /* Force stack layout on mobile */
+    .watch-container, .watch-container.movie-mode { grid-template-columns: 1fr !important; }
+    
+    .sidebar { width: 100%; height: auto; max-height: 500px; margin-top: 20px; }
+    
     nav { flex-direction: column; gap: 10px; }
     .search-input { width: 100%; }
     .hero-container { height: 300px; }
     .slide-title { font-size: 2rem; }
     .slide-content { left: 20px; width: 90%; }
-}
-
-/* --- LANGUAGE BADGE --- */
-.badge-lang {
-    position: absolute; top: 10px; left: 10px;
-    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fff; padding: 4px 8px; border-radius: 6px; 
-    font-size: 0.7rem; font-weight: bold; text-transform: uppercase;
-    z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-}
-.lang-dub { background: #8B5CF6; }
-.lang-hindi { background: #F59E0B; }
-
-.type-badge {
-    position: absolute; bottom: 10px; right: 10px;
-    background: rgba(0,0,0,0.8); color: white;
-    padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;
-    z-index: 2; border: 1px solid rgba(255,255,255,0.3);
-}
-
-/* --- PLAYER LAYOUTS --- */
-.watch-container {
-    display: grid;
-    grid-template-columns: 3fr 1fr; /* Default: Series Mode (Video + Sidebar) */
-    gap: 30px;
-}
-
-/* Movie Mode: Adds this class when watching a movie */
-.watch-container.movie-mode {
-    grid-template-columns: 1fr; /* Full width */
-}
-.watch-container.movie-mode .sidebar {
-    display: none; /* Hide sidebar for movies */
-}
-
-/* --- MOBILE RESPONSIVE (The Fix) --- */
-@media (max-width: 900px) {
-    /* Force stacking on mobile, regardless of Movie or Series */
-    .watch-container, 
-    .watch-container.movie-mode { 
-        grid-template-columns: 1fr !important; 
-    }
-
-    .sidebar { 
-        width: 100%; 
-        height: auto; 
-        max-height: 500px; /* Limit height on phone */
-    }
 }
