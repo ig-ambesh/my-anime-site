@@ -30,20 +30,44 @@ if (grid) {
         function renderGrid(filterText = "") {
             grid.innerHTML = "";
             allAnime.forEach(anime => {
-                if (anime.title.toLowerCase().includes(filterText.toLowerCase())) {
-                    const card = document.createElement('div');
-                    card.classList.add('anime-card');
-                    card.innerHTML = `
-                        <img src="${anime.image}" alt="${anime.title}">
-                        <div class="card-info">
-                            <h3>${anime.title}</h3>
-                            <p style="color: #aaa; font-size: 0.9rem;">${anime.seasons ? anime.seasons.length : 0} Seasons</p>
-                        </div>
-                    `;
-                    card.onclick = () => window.location.href = `watch.html?anime=${anime.id}`;
-                    grid.appendChild(card);
-                }
-            });
+    if (anime.title.toLowerCase().includes(filterText.toLowerCase())) {
+        
+        // --- BADGE LOGIC START ---
+        let badgeHTML = "";
+        
+        // Check if "lastUpdated" exists
+        if (anime.lastUpdated) {
+            const today = new Date();
+            const updateDate = anime.lastUpdated.toDate(); // Convert Firebase timestamp to JS Date
+            const timeDiff = today - updateDate;
+            const daysDiff = timeDiff / (1000 * 3600 * 24); // Convert ms to days
+
+            // If updated less than 3 days ago, show badge
+            if (daysDiff < 3) {
+                badgeHTML = `<div class="badge-new">NEW EP</div>`;
+            }
+        }
+        // --- BADGE LOGIC END ---
+
+        const card = document.createElement('div');
+        card.classList.add('anime-card');
+        
+        // We insert ${badgeHTML} before the image
+        card.innerHTML = `
+            ${badgeHTML}
+            <img src="${anime.image}" 
+                 alt="${anime.title}" 
+                 onerror="this.onerror=null; this.src='https://wallpapercave.com/wp/wp2326757.jpg'; this.classList.add('img-error');">
+            <div class="card-info">
+                <h3>${anime.title}</h3>
+                <p style="color: #aaa; font-size: 0.9rem;">${anime.seasons ? anime.seasons.length : 0} Seasons</p>
+            </div>
+        `;
+        
+        card.onclick = () => window.location.href = `watch.html?anime=${anime.id}`;
+        grid.appendChild(card);
+    }
+});
         }
 
         renderGrid(); // Initial Load
