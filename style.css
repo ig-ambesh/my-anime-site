@@ -207,3 +207,15 @@ h1.section-title { font-size: 2rem; margin-bottom: 30px; font-weight: 600; borde
     .slide-title { font-size: 2rem; }
     .slide-content { left: 20px; width: 90%; }
 }
+
+/* --- LANGUAGE BADGE --- */
+.badge-lang {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff; padding: 4px 8px; border-radius: 6px; 
+    font-size: 0.7rem; font-weight: bold; text-transform: uppercase;
+    z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+.lang-dub { background: #8B5CF6; }
+.lang-hindi { background: #F59E0B; }

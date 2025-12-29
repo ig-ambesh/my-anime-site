@@ -75,20 +75,32 @@ if (grid) {
     });
 }
 
+// === CARD CREATOR (Updated with Lang Badge) ===
 function createAnimeCard(anime, customSubtitle = null) {
     const card = document.createElement('div');
     card.classList.add('anime-card');
 
+    // 1. NEW EPISODE BADGE (Right)
     let badgeHTML = "";
     if (anime.lastUpdated && !customSubtitle) {
         const days = (new Date() - anime.lastUpdated.toDate()) / (1000 * 3600 * 24);
         if (days < 3) badgeHTML = `<div class="badge-new">NEW EP</div>`;
     }
 
+    // 2. LANGUAGE BADGE (Left)
+    let langHTML = "";
+    if (anime.language) {
+        let colorClass = "";
+        if(anime.language.includes("Dub")) colorClass = "lang-dub";
+        if(anime.language.includes("Hindi")) colorClass = "lang-hindi";
+        langHTML = `<div class="badge-lang ${colorClass}">${anime.language}</div>`;
+    }
+
     const sub = customSubtitle ? `<span style="color:#8B5CF6">${customSubtitle}</span>` : `${anime.seasons ? anime.seasons.length : 0} Seasons`;
 
     card.innerHTML = `
         ${badgeHTML}
+        ${langHTML}
         <img src="${anime.image}" onerror="this.src='https://wallpapercave.com/wp/wp2326757.jpg'">
         <div class="card-info">
             <h3>${anime.title}</h3>
@@ -106,7 +118,6 @@ function initSlider(animes) {
     const wrapper = document.getElementById('hero-slider');
     const dots = document.getElementById('slider-dots');
     
-    // Arrows (Now they exist in HTML, so this won't crash!)
     const prevBtn = document.querySelector('.prev');
     const nextBtn = document.querySelector('.next');
     
@@ -114,7 +125,6 @@ function initSlider(animes) {
     const featured = animes.slice(0, MAX_SLIDES);
     let current = 0;
 
-    // Create Slides
     featured.forEach((anime, index) => {
         const slide = document.createElement('div');
         slide.classList.add('slide');
@@ -130,7 +140,6 @@ function initSlider(animes) {
             </div>`;
         wrapper.appendChild(slide);
 
-        // Create Dot
         const dot = document.createElement('div');
         dot.classList.add('dot');
         if(index === 0) dot.classList.add('active');
@@ -156,10 +165,7 @@ function initSlider(animes) {
     }
 
     if(featured.length > 1) {
-        // Auto Play
         let interval = setInterval(() => showSlide(current + 1), 5000);
-        
-        // Manual Navigation
         prevBtn.onclick = () => { showSlide(current - 1); clearInterval(interval); interval = setInterval(() => showSlide(current + 1), 5000); };
         nextBtn.onclick = () => { showSlide(current + 1); clearInterval(interval); interval = setInterval(() => showSlide(current + 1), 5000); };
     } else {
