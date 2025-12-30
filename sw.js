@@ -1,11 +1,12 @@
 const CACHE_NAME = 'anistream-v1';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/watch.html',
-  '/style.css',
-  '/script.js',
-  '/manifest.json'
+  './',              // <-- ADD DOT
+  './index.html',    // <-- ADD DOT
+  './watch.html',    // <-- ADD DOT
+  './style.css',     // <-- ADD DOT
+  './script.js',     // <-- ADD DOT
+  './manifest.json', // <-- ADD DOT
+  './logo.png'       // <-- ADD DOT
 ];
 
 // Install Event
