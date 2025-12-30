@@ -6,51 +6,53 @@
     <title>Watching - AniStream</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="logo.png">
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#0a0a0a">
+
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body style="background: #0a0a0a;">
+<body>
 
-    <nav style="position: absolute; background: transparent; border: none; padding: 20px;">
-        <a href="index.html" class="glass-btn" style="text-decoration:none; color:white; font-weight:bold; display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-chevron-left"></i> Back to Home
-        </a>
-    </nav>
+    <a href="index.html" class="float-back-btn">
+        <i class="fas fa-arrow-left"></i>
+    </a>
 
     <div class="watch-layout">
         
-        <div class="player-section">
-            <div class="video-wrapper">
+        <div class="player-area">
+            
+            <div class="video-container-glow">
                 <iframe id="video-player" src="" frameborder="0" allowfullscreen></iframe>
             </div>
-            
-            <div class="video-info">
-                <h1 id="anime-title">Loading Title...</h1>
-                <h3 id="ep-title" style="color: var(--primary); margin-top: 5px;">Loading Episode...</h3>
+
+            <div class="video-meta">
+                <div class="meta-left">
+                    <h1 id="anime-title">Loading Title...</h1>
+                    <h3 id="ep-title">Select an Episode</h3>
+                </div>
                 
-                <div class="controls">
-                    <button onclick="playNextEpisode()" class="btn-primary">
-                        Next Episode <i class="fas fa-forward"></i>
+                <div class="meta-actions">
+                    <button onclick="playNextEpisode()" class="action-btn btn-next">
+                        <span>Next</span> <i class="fas fa-forward"></i>
                     </button>
-                    <button id="mylist-btn" onclick="toggleMyList()" class="btn-secondary">
-                        <i class="far fa-heart" id="mylist-icon"></i> Add to List
+                    <button id="mylist-btn" onclick="toggleMyList()" class="action-btn btn-glass">
+                        <i class="far fa-heart" id="mylist-icon"></i>
                     </button>
-                    <button onclick="shareAnime()" class="btn-secondary">
-                        <i class="fas fa-share-alt"></i> Share
+                    <button onclick="shareAnime()" class="action-btn btn-glass">
+                        <i class="fas fa-share-alt"></i>
                     </button>
                 </div>
             </div>
+
         </div>
 
-        <aside class="sidebar-section">
-            <div class="sidebar-header">
-                <h3>Episodes</h3>
+        <aside class="playlist-sidebar">
+            <div class="playlist-header">
+                <h3>Season</h3>
                 <div id="season-tabs" class="season-tabs"></div>
             </div>
-            <div id="episode-list-container" class="episode-list-modern">
-                </div>
+            <div id="episode-list-container" class="episode-scroller"></div>
         </aside>
 
     </div>

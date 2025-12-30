@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#141414">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -28,16 +29,41 @@
             <button class="search-trigger" onclick="openSearch()"><i class="fas fa-search"></i></button>
             <div id="user-section">
                 <button id="login-btn" onclick="googleLogin()" class="signin-btn">Sign In</button>
-                <img id="user-avatar" src="" style="width:35px; border-radius:4px; display:none; cursor:pointer;" onclick="logout()" title="Logout">
+                
+                <div id="profile-wrapper" class="profile-wrapper" style="display:none;">
+                    <img id="user-avatar" src="" style="width:35px; border-radius:4px;">
+                    <div class="profile-dropdown">
+                        <button onclick="openEditProfile()">Edit Profile</button>
+                        <button onclick="logout()">Logout</button>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
+    <div id="edit-profile-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 class="modal-title">Edit Profile</h3>
+            <input type="text" id="edit-name" class="modal-input" placeholder="Display Name">
+            <input type="text" id="edit-pic" class="modal-input" placeholder="Photo URL">
+            <div class="modal-btns">
+                <button class="modal-btn btn-cancel" onclick="closeEditProfile()">Cancel</button>
+                <button class="modal-btn btn-save" onclick="saveProfileChanges()">Save</button>
+            </div>
+        </div>
+    </div>
+
     <div id="search-overlay" class="search-overlay">
-        <div style="width: 100%; max-width: 800px; position: relative;">
-            <input type="text" id="search-input" class="big-search-input" placeholder="Titles, genres, people">
-            <i class="fas fa-times close-search" onclick="closeSearch()"></i>
-            <div id="search-results-grid" class="grid-wrap" style="margin-top: 40px;"></div>
+        <div class="search-container">
+            <div class="search-header-bar">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon-mobile"></i>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search titles, genres...">
+                </div>
+                <button class="close-search-btn" onclick="closeSearch()">Cancel</button>
+            </div>
+            
+            <div id="search-results-grid" class="grid-wrap search-results-area"></div>
         </div>
     </div>
 
@@ -46,56 +72,57 @@
     </div>
 
     <div class="main-container">
-        
         <div id="continue-watching-row" style="display:none;">
             <div class="section-header"><h3 class="section-title">Continue Watching</h3></div>
             <div class="grid-scroll" id="history-grid"></div>
         </div>
-
         <div id="main-section">
             <div class="section-header"><h3 class="section-title" id="row-title">Trending Now</h3></div>
-            <div class="grid-scroll" id="anime-row">
-                <div class="skeleton anime-card"></div>
-                <div class="skeleton anime-card"></div>
-                <div class="skeleton anime-card"></div>
-                <div class="skeleton anime-card"></div>
-            </div>
+            <div class="grid-scroll" id="anime-row"></div>
         </div>
-
         <div id="series-section">
             <div class="section-header"><h3 class="section-title">TV Series</h3></div>
             <div class="grid-scroll" id="series-row"></div>
         </div>
-
         <div id="movie-section">
             <div class="section-header"><h3 class="section-title">Blockbuster Movies</h3></div>
             <div class="grid-scroll" id="movie-row"></div>
         </div>
-
     </div>
 
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="window.location.href='index.html'">
+            <i class="fas fa-home"></i> <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="openSearch()">
+            <i class="fas fa-search"></i> <span>Search</span>
+        </button>
+        <button class="nav-item" onclick="window.location.href='mylist.html'">
+            <i class="fas fa-heart"></i> <span>My List</span>
+        </button>
+        <button class="nav-item" id="mobile-profile-btn" onclick="openMobileProfile()">
+            <i class="fas fa-user-circle"></i> <span>Profile</span>
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script src="script.js"></script>
 
     <script>
-        // Scroll Effect
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
             if (window.scrollY > 50) nav.classList.add('scrolled');
             else nav.classList.remove('scrolled');
         });
-
-        // Search Logic
         function openSearch() {
             document.getElementById('search-overlay').classList.add('active');
             document.getElementById('search-input').focus();
         }
         function closeSearch() {
             document.getElementById('search-overlay').classList.remove('active');
-            document.getElementById('search-results-grid').innerHTML = "";
-            document.getElementById('search-input').value = "";
         }
     </script>
 </body>

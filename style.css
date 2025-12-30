@@ -12,18 +12,17 @@
     --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; -webkit-tap-highlight-color: transparent; }
 
 body { background-color: var(--bg-main); color: var(--text-white); overflow-x: hidden; }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-main); }
 ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
 /* =========================================
-   2. NAVBAR
+   2. PC NAVIGATION
    ========================================= */
 nav {
     display: flex; justify-content: space-between; align-items: center;
@@ -36,149 +35,257 @@ nav.scrolled { background: var(--bg-glass); backdrop-filter: blur(10px); border-
 .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-transform: uppercase; text-decoration: none; cursor: pointer; }
 
 .nav-links { display: flex; gap: 25px; list-style: none; }
-.nav-links button { 
-    background: transparent; border: none; color: var(--text-gray); 
-    font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.2s; 
-}
+.nav-links button { background: transparent; border: none; color: var(--text-gray); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
 .nav-links button:hover, .nav-links button.active { color: white; }
 
 .nav-right { display: flex; align-items: center; gap: 20px; }
 .search-trigger { background: transparent; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
 .signin-btn { background: var(--primary); color: white; border: none; padding: 6px 16px; border-radius: 4px; font-weight: 600; cursor: pointer; }
 
+/* PROFILE DROPDOWN (DESKTOP) */
+.profile-wrapper { position: relative; cursor: pointer; }
+.profile-dropdown {
+    position: absolute; top: 100%; right: 0; margin-top: 10px;
+    background: #191919; border: 1px solid #333; border-radius: 8px;
+    width: 150px; display: none; flex-direction: column; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.profile-wrapper:hover .profile-dropdown { display: flex; }
+.profile-dropdown button {
+    background: transparent; border: none; color: #ccc; padding: 12px;
+    text-align: left; cursor: pointer; font-size: 0.9rem; transition: 0.2s;
+    border-bottom: 1px solid #222;
+}
+.profile-dropdown button:hover { background: #222; color: white; }
+.profile-dropdown button:last-child { border-bottom: none; color: #ff4d4d; }
+
+.bottom-nav { display: none; }
+
 /* =========================================
-   3. HERO SECTION
+   3. HERO SLIDER
    ========================================= */
-.hero-wrapper { position: relative; height: 80vh; width: 100%; margin-bottom: -80px; }
-.hero-slide { position: absolute; inset: 0; background-size: cover; background-position: center; display: flex; align-items: center; padding: 0 4%; mask-image: linear-gradient(to bottom, black 70%, transparent 100%); }
-.hero-overlay { position: absolute; inset: 0; background: radial-gradient(circle at 70% 50%, transparent 0%, var(--bg-main) 120%), linear-gradient(90deg, var(--bg-main) 10%, transparent 60%); }
-.hero-content { position: relative; z-index: 10; max-width: 600px; animation: slideUp 0.8s var(--ease-out); }
-.hero-title { font-size: 3.5rem; line-height: 1; margin-bottom: 15px; font-weight: 800; }
-.hero-desc { color: #ddd; font-size: 1rem; line-height: 1.5; margin-bottom: 25px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.hero-wrapper { position: relative; height: 85vh; width: 100%; margin-bottom: -60px; }
+.mySwiper { width: 100%; height: 100%; }
+.swiper-slide {
+    background-size: cover; background-position: center;
+    display: flex; align-items: center; padding: 0 4%; position: relative;
+    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+}
+.hero-overlay { position: absolute; inset: 0; background: radial-gradient(circle at 70% 50%, transparent 0%, var(--bg-main) 120%), linear-gradient(90deg, var(--bg-main) 10%, transparent 60%); pointer-events: none; }
+.hero-content { position: relative; z-index: 10; max-width: 650px; animation: slideUp 0.8s var(--ease-out); }
+.hero-title { font-size: 4rem; line-height: 1; margin-bottom: 15px; font-weight: 800; }
+.hero-desc { color: #ddd; font-size: 1.1rem; line-height: 1.5; margin-bottom: 25px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .hero-btns { display: flex; gap: 15px; }
-.btn-primary { background: white; color: black; padding: 10px 25px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-.btn-secondary { background: rgba(109, 109, 110, 0.7); color: white; padding: 10px 25px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); }
+.btn-primary { background: white; color: black; padding: 12px 30px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; font-size: 1.1rem; }
+.btn-secondary { background: rgba(109, 109, 110, 0.7); color: white; padding: 12px 30px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); font-size: 1.1rem; }
+
+.swiper-button-next, .swiper-button-prev { color: white !important; transform: scale(0.7); opacity: 0; transition: 0.3s; }
+.hero-wrapper:hover .swiper-button-next, .hero-wrapper:hover .swiper-button-prev { opacity: 1; }
+.swiper-pagination-bullet { background: white !important; opacity: 0.5; }
+.swiper-pagination-bullet-active { background: var(--primary) !important; opacity: 1; }
 
 /* =========================================
-   4. HOME PAGE LAYOUT
+   4. SECTIONS & CARDS
    ========================================= */
-.main-container { position: relative; z-index: 20; padding: 20px 4%; }
-.section-header { margin-bottom: 15px; margin-top: 40px; }
-.section-title { font-size: 1.4rem; font-weight: 600; color: #e5e5e5; }
+.main-container { position: relative; z-index: 20; padding: 0 4% 40px; }
+.section-header { margin-bottom: 15px; margin-top: 20px; }
+.section-title { font-size: 1.5rem; font-weight: 600; color: #e5e5e5; }
 
-/* Grids */
-.grid-scroll { 
-    display: flex; gap: 15px; overflow-x: auto; padding-bottom: 40px; 
-    padding-left: 4%; margin-left: -4%; /* Full bleed */
-}
-.grid-wrap { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
-    gap: 20px; 
-}
+.grid-scroll { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 40px; padding-left: 4%; margin-left: -4%; }
+.grid-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
 
-.anime-card { 
-    min-width: 200px; height: 300px; position: relative; border-radius: 6px; 
-    cursor: pointer; transition: transform 0.3s ease, z-index 0s 0.1s; z-index: 1; 
-}
+.anime-card { min-width: 200px; height: 300px; position: relative; border-radius: 6px; cursor: pointer; transition: transform 0.3s ease, z-index 0s 0.1s; z-index: 1; }
 .anime-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
 .anime-card:hover { transform: scale(1.15); z-index: 100; transition-delay: 0.2s; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-.card-info { 
-    position: absolute; bottom: 0; left: 0; right: 0; padding: 10px; 
-    background: linear-gradient(to top, #141414 10%, transparent); opacity: 0; transition: 0.3s; 
-}
+.card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 10px; background: linear-gradient(to top, #141414 10%, transparent); opacity: 0; transition: 0.3s; }
 .anime-card:hover .card-info { opacity: 1; }
-.card-meta { display: flex; gap: 8px; font-size: 0.6rem; color: #ccc; margin-top: 5px; }
+.card-meta { display: flex; gap: 8px; font-size: 0.7rem; color: #ccc; margin-top: 5px; }
 .match { color: #46d369; font-weight: bold; }
 
 /* =========================================
-   5. PLAYER PAGE STYLES (PREMIUM)
+   5. PLAYER PAGE (CINEMATIC)
    ========================================= */
-.watch-layout {
-    display: grid; grid-template-columns: 1fr 400px; 
-    height: 100vh; overflow: hidden;
+.watch-layout { display: grid; grid-template-columns: 1fr 400px; height: 100vh; overflow: hidden; background: #050505; }
+
+.float-back-btn {
+    position: fixed; top: 20px; left: 20px; z-index: 100;
+    width: 45px; height: 45px; border-radius: 50%;
+    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    color: white; text-decoration: none; border: 1px solid rgba(255,255,255,0.1);
+    transition: 0.3s;
 }
+.float-back-btn:hover { background: white; color: black; transform: scale(1.1); }
 
-/* LEFT: VIDEO */
-.player-section {
-    padding: 80px 40px 40px 40px; 
-    overflow-y: auto; display: flex; flex-direction: column;
+.player-area { padding: 40px 60px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+
+.video-container-glow {
+    width: 100%; aspect-ratio: 16/9; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 0 80px rgba(229, 9, 20, 0.15); border: 1px solid #222;
+    background: #000; margin-bottom: 30px;
 }
+.video-container-glow iframe { width: 100%; height: 100%; }
 
-.video-wrapper {
-    width: 100%; aspect-ratio: 16/9; background: black;
-    border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-    margin-bottom: 25px; border: 1px solid #333;
-}
-.video-wrapper iframe { width: 100%; height: 100%; border: none; }
+.video-meta { display: flex; justify-content: space-between; align-items: center; }
+.video-meta h1 { font-size: 2rem; margin-bottom: 5px; text-shadow: 0 5px 20px rgba(0,0,0,1); }
+.video-meta h3 { color: var(--primary); font-size: 1rem; font-weight: 500; }
 
-.video-info h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 5px; color: white; }
-.controls { display: flex; gap: 15px; margin-top: 25px; }
+.meta-actions { display: flex; gap: 15px; }
 
-/* RIGHT: SIDEBAR */
-.sidebar-section {
-    background: #111; border-left: 1px solid #222;
-    display: flex; flex-direction: column; height: 100vh;
-}
-.sidebar-header { padding: 25px; background: #161616; border-bottom: 1px solid #222; }
-.sidebar-header h3 { margin-bottom: 15px; color: #888; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+.action-btn { height: 50px; border-radius: 12px; border: none; cursor: pointer; font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+.action-btn:active { transform: scale(0.95); }
 
-/* NEW SEASON TABS (Better CSS) */
-.season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-.season-tabs::-webkit-scrollbar { height: 4px; }
-.season-tabs::-webkit-scrollbar-thumb { background: #333; }
+.btn-next { padding: 0 30px; gap: 10px; background: var(--primary); color: white; box-shadow: 0 10px 30px rgba(229, 9, 20, 0.3); }
+.btn-next:hover { background: #ff1f34; box-shadow: 0 10px 40px rgba(229, 9, 20, 0.5); }
 
-.season-btn {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-    color: #ccc; padding: 8px 16px; border-radius: 50px; cursor: pointer;
-    white-space: nowrap; font-size: 0.9rem; font-weight: 600; transition: 0.3s;
-}
-.season-btn:hover { background: rgba(255,255,255,0.15); color: white; }
-.season-btn.active-season { background: white; color: black; border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
+.btn-glass { width: 50px; font-size: 1.2rem; background: rgba(255,255,255,0.05); color: #ccc; border: 1px solid rgba(255,255,255,0.1); }
+.btn-glass:hover { background: white; color: black; }
 
-/* EPISODE LIST */
-.episode-list-modern { flex: 1; overflow-y: auto; padding: 15px; }
+.playlist-sidebar { background: #0e0e0e; border-left: 1px solid #222; display: flex; flex-direction: column; }
+.playlist-header { padding: 30px 20px; background: #121212; border-bottom: 1px solid #222; }
+.playlist-header h3 { color: #666; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
 
-.ep-btn {
-    display: flex; align-items: center; gap: 15px;
-    padding: 18px; margin-bottom: 8px; border-radius: 8px;
-    cursor: pointer; transition: 0.2s; color: #999;
-    border: 1px solid transparent;
-}
-.ep-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-.ep-btn.active { 
-    background: linear-gradient(90deg, rgba(229, 9, 20, 0.1), transparent); 
-    border-left: 4px solid var(--primary); color: white; 
-}
-.ep-num { font-size: 1.5rem; font-weight: 800; color: #444; width: 30px; }
-.ep-btn.active .ep-num { color: var(--primary); }
+.season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+.season-tabs::-webkit-scrollbar { display: none; }
+.season-btn { background: transparent; border: 1px solid #333; color: #888; padding: 8px 18px; border-radius: 20px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
+.season-btn:hover { border-color: #666; color: white; }
+.season-btn.active-season { background: white; color: black; border-color: white; }
 
-/* Mobile */
-@media (max-width: 1100px) {
-    .watch-layout { grid-template-columns: 1fr; height: auto; overflow: visible; }
-    .sidebar-section { height: 600px; border-left: none; border-top: 1px solid #333; }
-}
+.episode-scroller { flex: 1; overflow-y: auto; padding: 10px; }
+.episode-scroller::-webkit-scrollbar { width: 6px; }
+.episode-scroller::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+.ep-card { display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 8px; border-radius: 10px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+.ep-card:hover { background: #1a1a1a; }
+.ep-card.active { background: #1a1a1a; border: 1px solid #333; border-left: 4px solid var(--primary); }
+.ep-index { font-size: 1.2rem; font-weight: 800; color: #333; min-width: 30px; }
+.ep-card.active .ep-index { color: var(--primary); }
+.ep-name { font-size: 0.95rem; color: #ccc; font-weight: 500; }
+.ep-card.active .ep-name { color: white; }
 
 /* =========================================
-   6. SEARCH & UTILS
+   6. SEARCH & MODALS (PC STYLES)
    ========================================= */
 .search-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000;
     display: none; justify-content: center; padding-top: 100px;
 }
 .search-overlay.active { display: flex; }
-.big-search-input { width: 600px; background: transparent; border: none; border-bottom: 2px solid #333; font-size: 2.5rem; color: white; padding: 10px; outline: none; }
-.close-search { position: absolute; top: 30px; right: 40px; font-size: 2rem; cursor: pointer; }
 
-/* Skeleton */
+/* PC Default Search Styles */
+.search-container { width: 100%; max-width: 800px; position: relative; }
+.search-header-bar { width: 100%; position: relative; } /* Wrapper for PC */
+.search-icon-mobile { display: none; } /* Hide mobile icon on PC */
+
+.search-input {
+    width: 100%; background: transparent; border: none; 
+    border-bottom: 2px solid #333; font-size: 3rem; color: white; 
+    padding: 15px 0; outline: none; font-weight: bold;
+}
+.close-search-btn {
+    position: absolute; top: 0; right: 0; background: none; border: none;
+    font-size: 0; /* Hide text "Cancel" on PC */
+    cursor: pointer;
+}
+.close-search-btn::after {
+    content: "\f00d"; /* FontAwesome Close Icon */
+    font-family: "Font Awesome 6 Free"; font-weight: 900;
+    font-size: 2.5rem; color: #666;
+}
+.close-search-btn:hover::after { color: white; }
+
+/* Edit Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+.modal-box { background: #191919; padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; border: 1px solid #333; text-align: center; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.7); }
+.modal-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; }
+.modal-input { width: 100%; padding: 12px; background: #252525; border: 1px solid #333; border-radius: 8px; color: white; margin-bottom: 15px; outline: none; }
+.modal-input:focus { border-color: var(--primary); }
+.modal-btns { display: flex; gap: 10px; margin-top: 10px; }
+.modal-btn { flex: 1; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+.btn-save { background: var(--primary); color: white; }
+.btn-cancel { background: #333; color: white; }
+
 .skeleton { background: linear-gradient(90deg, #1f1f1f 25%, #2a2a2a 50%, #1f1f1f 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Mobile Responsive */
-@media (max-width: 1000px) {
-    .watch-layout { grid-template-columns: 1fr; height: auto; overflow: visible; }
-    .player-section { padding: 60px 20px 20px 20px; }
-    .sidebar-section { height: 500px; border-left: none; border-top: 1px solid #333; }
-    .nav-links { display: none; }
+/* =========================================
+   7. MOBILE OVERRIDES (APP STYLE)
+   ========================================= */
+@media (max-width: 900px) {
+    .nav-links, .nav-right { display: none; }
+    
+    .bottom-nav {
+        display: flex; position: fixed; bottom: 0; left: 0; width: 100%;
+        background: rgba(15, 15, 15, 0.98); border-top: 1px solid #222;
+        justify-content: space-around; padding: 12px 0; z-index: 2001;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    .nav-item { background: none; border: none; color: #666; display: flex; flex-direction: column; align-items: center; font-size: 0.65rem; gap: 4px; cursor: pointer;}
+    .nav-item i { font-size: 1.2rem; margin-bottom: 3px; }
+    .nav-item.active { color: white; }
+    .nav-item img { width: 24px; height: 24px; border-radius: 50%; margin-bottom: 3px; border: 1px solid #666; }
+
+    /* Hero Fixes */
+    .hero-wrapper { height: 55vh; margin-bottom: 0; }
+    .hero-title { font-size: 1.5rem; margin-bottom: 5px; }
+    .hero-content .match, .hero-content span { font-size: 0.7rem; }
+    .hero-desc { display: none; }
+    .hero-content { padding-top: 0; justify-content: flex-end; display: flex; flex-direction: column; height: 100%; padding-bottom: 20px; }
+    
+    .hero-btns .btn-primary, .hero-btns .btn-secondary { padding: 8px 16px; font-size: 0.9rem; }
+
+    .anime-card { min-width: 120px; width: 120px; height: 180px; }
+    .grid-wrap { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    /* --- MOBILE SEARCH OVERHAUL --- */
+    .search-overlay { 
+        padding: 0; background: #000; z-index: 5000;
+        align-items: flex-start; /* Fill height */
+    }
+    .search-container { 
+        width: 100%; max-width: none; padding: 0;
+    }
+    
+    .search-header-bar {
+        display: flex; align-items: center; gap: 10px;
+        padding: 15px; background: #111; border-bottom: 1px solid #222;
+    }
+    
+    .search-input-wrapper {
+        flex: 1; position: relative; display: flex; align-items: center;
+        background: #222; border-radius: 8px; padding: 0 10px;
+    }
+    
+    .search-icon-mobile {
+        display: block; color: #666; font-size: 0.9rem; margin-right: 8px;
+    }
+    
+    .search-input {
+        width: 100%; border: none; background: transparent;
+        font-size: 1rem; padding: 10px 0; font-weight: normal; color: white;
+    }
+    
+    /* Reset PC Close Button styles for Mobile */
+    .close-search-btn {
+        position: static; font-size: 0.9rem; color: var(--primary);
+        font-weight: 600;
+    }
+    .close-search-btn::after { content: none; } /* Remove PC Icon */
+    
+    .search-results-area { padding: 15px; overflow-y: auto; height: calc(100vh - 70px); }
+    /* ----------------------------- */
+
+    .watch-layout { display: block; height: auto; overflow: visible; }
+    .player-area { padding: 60px 0 0 0; background: black; }
+    .video-container-glow { border-radius: 0; border: none; border-bottom: 1px solid #333; margin-bottom: 20px; box-shadow: none; width: 100vw; }
+    .video-meta { flex-direction: column; align-items: flex-start; padding: 0 20px 20px; gap: 20px; }
+    .video-meta h1 { font-size: 1.4rem; }
+    .meta-actions { width: 100%; }
+    .btn-next { flex: 1; }
+    
+    .playlist-sidebar { height: auto; border-left: none; border-top: 1px solid #333; padding-bottom: 80px; }
+    .float-back-btn { top: 15px; left: 15px; width: 40px; height: 40px; background: rgba(0,0,0,0.5); border: none; }
+    
+    body { padding-bottom: 70px; } 
 }
