@@ -4,73 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watching - AniStream</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="theme-color" content="#141414">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json"> 
-    <script>
-        if ('serviceWorker' in navigator) {
-            // REMOVE '/' from sw.js
-            navigator.serviceWorker.register('sw.js') 
-            .then(() => console.log('App Installed Ready'))
-            .catch((err) => console.log('App Fail', err));
-        }
-    </script>
 </head>
-<body>
+<body style="background: #0a0a0a;">
 
-    <nav>
-        <a href="index.html" class="logo">AniStream</a>
-        <a href="index.html" style="color: #aaa; text-decoration: none;">← Back to Home</a>
+    <nav style="position: absolute; background: transparent; border: none; padding: 20px;">
+        <a href="index.html" class="glass-btn" style="text-decoration:none; color:white; font-weight:bold; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-chevron-left"></i> Back to Home
+        </a>
     </nav>
 
-    <div class="container watch-container">
-        <main>
+    <div class="watch-layout">
+        
+        <div class="player-section">
             <div class="video-wrapper">
-                <div class="video-container">
-                    <iframe id="video-player" src="" frameborder="0" allowfullscreen></iframe>
-                </div>
+                <iframe id="video-player" src="" frameborder="0" allowfullscreen></iframe>
             </div>
             
-            <div style="margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
-                <div>
-                    <h2 id="anime-title" style="font-size: 2rem;">Loading...</h2>
-                    <h3 id="ep-title" style="color: #888; font-weight: 400;">Select an episode</h3>
-                </div>
+            <div class="video-info">
+                <h1 id="anime-title">Loading Title...</h1>
+                <h3 id="ep-title" style="color: var(--primary); margin-top: 5px;">Loading Episode...</h3>
                 
-                <button id="mylist-btn" onclick="toggleMyList()" style="
-                    background: rgba(255,255,255,0.1); 
-                    border: 1px solid rgba(255,255,255,0.2); 
-                    color: white; 
-                    padding: 12px 20px; 
-                    border-radius: 50px; 
-                    cursor: pointer; 
-                    display: flex; 
-                    align-items: center; 
-                    gap: 10px; 
-                    font-weight: 600;
-                    transition: 0.3s;
-                ">
-                    <i class="far fa-heart" id="mylist-icon"></i> <span id="mylist-text">Add to List</span>
-                </button>
+                <div class="controls">
+                    <button onclick="playNextEpisode()" class="btn-primary">
+                        Next Episode <i class="fas fa-forward"></i>
+                    </button>
+                    <button id="mylist-btn" onclick="toggleMyList()" class="btn-secondary">
+                        <i class="far fa-heart" id="mylist-icon"></i> Add to List
+                    </button>
+                    <button onclick="shareAnime()" class="btn-secondary">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
             </div>
+        </div>
 
-            <div class="comments-wrapper">
-                <div id="comments-section">
-                    </div>
+        <aside class="sidebar-section">
+            <div class="sidebar-header">
+                <h3>Episodes</h3>
+                <div id="season-tabs" class="season-tabs"></div>
             </div>
-
-        </main>
-
-        <aside class="sidebar">
-            <div id="season-tabs" class="season-tabs"></div>
-            <div id="episode-list-container" class="episode-list"></div>
+            <div id="episode-list-container" class="episode-list-modern">
+                </div>
         </aside>
+
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
     <script src="script.js"></script>
 </body>
 </html>

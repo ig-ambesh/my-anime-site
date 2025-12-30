@@ -1,306 +1,184 @@
 /* =========================================
-   1. GLOBAL VARIABLES & RESET
+   1. CORE VARIABLES & RESET
    ========================================= */
 :root {
-    --bg-color: #050505;
-    --glass-surface: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --primary-glow: linear-gradient(135deg, #FF3D77, #8B5CF6);
-    --accent-color: #e50914;
-    --text-main: #ffffff;
-    --text-muted: #a3a3a3;
+    --bg-main: #141414;
+    --bg-card: #1f1f1f;
+    --bg-glass: rgba(20, 20, 20, 0.95);
+    --primary: #e50914;
+    --text-white: #ffffff;
+    --text-gray: #b3b3b3;
+    --border-glass: 1px solid rgba(255, 255, 255, 0.1);
+    --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
 
-body {
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    min-height: 100vh;
-    background-image: 
-        radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 25%), 
-        radial-gradient(circle at 85% 30%, rgba(255, 61, 119, 0.08), transparent 25%);
-    background-attachment: fixed;
-}
+body { background-color: var(--bg-main); color: var(--text-white); overflow-x: hidden; }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
 /* =========================================
-   2. FLOATING NAVBAR
+   2. NAVBAR
    ========================================= */
 nav {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 5%; position: sticky; top: 20px; z-index: 100;
-    margin: 0 auto; width: 90%;
-    background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border); border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    padding: 15px 4%; position: fixed; top: 0; width: 100%; z-index: 1000;
+    background: linear-gradient(180deg, rgba(0,0,0,0.7) 10%, transparent);
+    transition: 0.4s var(--ease-out);
 }
+nav.scrolled { background: var(--bg-glass); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-.logo {
-    font-size: 1.5rem; font-weight: 800; letter-spacing: -1px;
-    background: var(--primary-glow); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    cursor: pointer; text-decoration: none;
-}
+.logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-transform: uppercase; text-decoration: none; cursor: pointer; }
 
-.search-input {
-    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
-    color: white; padding: 10px 20px; border-radius: 20px; width: 250px;
-    transition: 0.3s ease; outline: none;
+.nav-links { display: flex; gap: 25px; list-style: none; }
+.nav-links button { 
+    background: transparent; border: none; color: var(--text-gray); 
+    font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.2s; 
 }
-.search-input:focus { width: 320px; background: rgba(0,0,0,0.5); border-color: #8B5CF6; }
+.nav-links button:hover, .nav-links button.active { color: white; }
 
-/* USER PROFILE & DROPDOWN FIX */
-.user-profile { 
-    position: relative; 
-    cursor: pointer; 
-    padding-bottom: 10px; /* Extends the hover area slightly downwards */
-}
-
-#user-avatar { 
-    width: 40px; 
-    height: 40px; 
-    border-radius: 50%; 
-    border: 2px solid #8B5CF6; 
-}
-
-.dropdown-menu {
-    position: absolute; 
-    top: 100%;             /* Attach exactly to bottom of profile */
-    right: 0;
-    
-    background: rgba(10, 10, 10, 0.95); 
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border); 
-    
-    padding: 15px; 
-    border-radius: 12px;
-    min-width: 160px;      /* Make it wider so it's easier to hit */
-    
-    display: none; 
-    flex-direction: column;
-    gap: 10px;             /* Space between buttons */
-    z-index: 1000;         /* Ensure it sits on top of everything */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-/* The Magic Hover Rule */
-.user-profile:hover .dropdown-menu { 
-    display: flex; 
-}
-
-.dropdown-menu button { 
-    background: transparent; 
-    border: none; 
-    color: #fff;           /* White text */
-    text-align: left; 
-    cursor: pointer; 
-    font-size: 0.95rem;
-    padding: 8px;
-    border-radius: 6px;
-    transition: 0.2s;
-}
-
-.dropdown-menu button:hover {
-    background: rgba(255, 255, 255, 0.1); /* Light highlight on hover */
-    color: #FF3D77;
-}
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.search-trigger { background: transparent; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+.signin-btn { background: var(--primary); color: white; border: none; padding: 6px 16px; border-radius: 4px; font-weight: 600; cursor: pointer; }
 
 /* =========================================
-   3. HERO SLIDER & ARROWS
+   3. HERO SECTION
    ========================================= */
-.hero-container {
-    position: relative; width: 90%; max-width: 1600px; margin: 30px auto;
-    height: 450px; border-radius: 20px; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
-}
-.slider-wrapper { position: relative; width: 100%; height: 100%; }
-.slide {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    opacity: 0; transition: opacity 0.8s ease-in-out;
-    background-size: cover; background-position: center;
-}
-.slide.active { opacity: 1; z-index: 1; }
-.slide::after { 
-    content: ''; position: absolute; inset: 0; 
-    background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
-    z-index: 2; 
-}
-.slide-content {
-    position: relative; z-index: 5;
-    top: 50%; transform: translateY(-50%);
-    left: 50px; max-width: 500px; color: white;
-}
-.slide-title { 
-    font-size: 3rem; font-weight: 800; margin-bottom: 10px; line-height: 1.1; 
-    color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-}
-.slide-desc { color: #ddd; margin-bottom: 25px; font-size: 1.1rem; }
-.watch-now-btn {
-    padding: 12px 30px; background: var(--accent-color); color: white;
-    border: none; border-radius: 30px; font-weight: bold; cursor: pointer;
-    box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4); transition: 0.3s;
-}
-.watch-now-btn:hover { background: white; color: black; }
-
-.slider-btn {
-    position: absolute; top: 50%; transform: translateY(-50%) scale(0.9);
-    width: 50px; height: 50px;
-    background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); 
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white; border-radius: 50%; cursor: pointer; z-index: 10;
-    display: flex; justify-content: center; align-items: center;
-    font-size: 1.2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    opacity: 0; pointer-events: none; transition: all 0.3s ease-in-out;
-}
-.prev { left: 20px; }
-.next { right: 20px; }
-.hero-container:hover .slider-btn { opacity: 1; pointer-events: all; transform: translateY(-50%) scale(1); }
-.slider-btn:hover { background: rgba(255, 255, 255, 0.4); transform: translateY(-50%) scale(1.1) !important; }
+.hero-wrapper { position: relative; height: 80vh; width: 100%; margin-bottom: -80px; }
+.hero-slide { position: absolute; inset: 0; background-size: cover; background-position: center; display: flex; align-items: center; padding: 0 4%; mask-image: linear-gradient(to bottom, black 70%, transparent 100%); }
+.hero-overlay { position: absolute; inset: 0; background: radial-gradient(circle at 70% 50%, transparent 0%, var(--bg-main) 120%), linear-gradient(90deg, var(--bg-main) 10%, transparent 60%); }
+.hero-content { position: relative; z-index: 10; max-width: 600px; animation: slideUp 0.8s var(--ease-out); }
+.hero-title { font-size: 3.5rem; line-height: 1; margin-bottom: 15px; font-weight: 800; }
+.hero-desc { color: #ddd; font-size: 1rem; line-height: 1.5; margin-bottom: 25px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.hero-btns { display: flex; gap: 15px; }
+.btn-primary { background: white; color: black; padding: 10px 25px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+.btn-secondary { background: rgba(109, 109, 110, 0.7); color: white; padding: 10px 25px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); }
 
 /* =========================================
-   4. GRID, CARDS & BADGES
+   4. HOME PAGE LAYOUT
    ========================================= */
-.container { max-width: 1400px; margin: 40px auto; padding: 0 20px; }
-h1.section-title { font-size: 2rem; margin-bottom: 30px; font-weight: 600; border-left: 4px solid #FF3D77; padding-left: 15px; }
+.main-container { position: relative; z-index: 20; padding: 20px 4%; }
+.section-header { margin-bottom: 15px; margin-top: 40px; }
+.section-title { font-size: 1.4rem; font-weight: 600; color: #e5e5e5; }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+/* Grids */
+.grid-scroll { 
+    display: flex; gap: 15px; overflow-x: auto; padding-bottom: 40px; 
+    padding-left: 4%; margin-left: -4%; /* Full bleed */
+}
+.grid-wrap { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+    gap: 20px; 
+}
 
-.anime-card {
-    background: var(--glass-surface); border: 1px solid var(--glass-border);
-    border-radius: 16px; overflow: hidden; cursor: pointer; position: relative;
-    transition: all 0.4s;
+.anime-card { 
+    min-width: 200px; height: 300px; position: relative; border-radius: 6px; 
+    cursor: pointer; transition: transform 0.3s ease, z-index 0s 0.1s; z-index: 1; 
 }
-.anime-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
-.anime-card img { width: 100%; height: 300px; object-fit: cover; }
-.card-info {
-    padding: 15px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    position: absolute; bottom: 0; width: 100%;
+.anime-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+.anime-card:hover { transform: scale(1.15); z-index: 100; transition-delay: 0.2s; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+.card-info { 
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 10px; 
+    background: linear-gradient(to top, #141414 10%, transparent); opacity: 0; transition: 0.3s; 
 }
-.card-info h3 { font-size: 1rem; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* BADGES */
-.badge-new {
-    position: absolute; top: 10px; right: 10px; background: var(--accent-color);
-    padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: bold;
-    box-shadow: 0 5px 15px rgba(255, 9, 20, 0.4); z-index: 2;
-}
-.badge-lang {
-    position: absolute; top: 10px; left: 10px;
-    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fff; padding: 4px 8px; border-radius: 6px; 
-    font-size: 0.7rem; font-weight: bold; text-transform: uppercase;
-    z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-}
-.lang-dub { background: #8B5CF6; }
-.lang-hindi { background: #F59E0B; }
+.anime-card:hover .card-info { opacity: 1; }
+.card-meta { display: flex; gap: 8px; font-size: 0.6rem; color: #ccc; margin-top: 5px; }
+.match { color: #46d369; font-weight: bold; }
 
 /* =========================================
-   5. PLAYER PAGE & COMMENTS
+   5. PLAYER PAGE STYLES (PREMIUM)
    ========================================= */
-.watch-container { display: grid; grid-template-columns: 3fr 1fr; gap: 30px; }
+.watch-layout {
+    display: grid; grid-template-columns: 1fr 400px; 
+    height: 100vh; overflow: hidden;
+}
+
+/* LEFT: VIDEO */
+.player-section {
+    padding: 80px 40px 40px 40px; 
+    overflow-y: auto; display: flex; flex-direction: column;
+}
+
 .video-wrapper {
-    background: var(--glass-surface); border: 1px solid var(--glass-border);
-    padding: 10px; border-radius: 20px;
+    width: 100%; aspect-ratio: 16/9; background: black;
+    border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    margin-bottom: 25px; border: 1px solid #333;
 }
-.video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; background: black; }
-.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.video-wrapper iframe { width: 100%; height: 100%; border: none; }
 
-.sidebar {
-    background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border); border-radius: 20px;
-    padding: 20px; height: 600px; display: flex; flex-direction: column;
+.video-info h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 5px; color: white; }
+.controls { display: flex; gap: 15px; margin-top: 25px; }
+
+/* RIGHT: SIDEBAR */
+.sidebar-section {
+    background: #111; border-left: 1px solid #222;
+    display: flex; flex-direction: column; height: 100vh;
 }
-.season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); }
+.sidebar-header { padding: 25px; background: #161616; border-bottom: 1px solid #222; }
+.sidebar-header h3 { margin-bottom: 15px; color: #888; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+
+/* NEW SEASON TABS (Better CSS) */
+.season-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+.season-tabs::-webkit-scrollbar { height: 4px; }
+.season-tabs::-webkit-scrollbar-thumb { background: #333; }
+
 .season-btn {
-    background: transparent; border: 1px solid var(--glass-border); color: var(--text-muted);
-    padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: #ccc; padding: 8px 16px; border-radius: 50px; cursor: pointer;
+    white-space: nowrap; font-size: 0.9rem; font-weight: 600; transition: 0.3s;
 }
-.season-btn.active-season { background: white; color: black; font-weight: bold; }
+.season-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+.season-btn.active-season { background: white; color: black; border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
 
-.episode-list { overflow-y: auto; flex: 1; }
+/* EPISODE LIST */
+.episode-list-modern { flex: 1; overflow-y: auto; padding: 15px; }
+
 .ep-btn {
-    width: 100%; text-align: left; padding: 15px; margin-bottom: 8px;
-    background: rgba(255,255,255,0.03); border-radius: 12px; color: #ddd; cursor: pointer;
+    display: flex; align-items: center; gap: 15px;
+    padding: 18px; margin-bottom: 8px; border-radius: 8px;
+    cursor: pointer; transition: 0.2s; color: #999;
+    border: 1px solid transparent;
 }
-.ep-btn.active { background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), transparent); border-left: 3px solid #8B5CF6; color: white; }
-
-/* --- COMMENTS SECTION (Desktop: Wide & Premium) --- */
-.comments-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+.ep-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+.ep-btn.active { 
+    background: linear-gradient(90deg, rgba(229, 9, 20, 0.1), transparent); 
+    border-left: 4px solid var(--primary); color: white; 
 }
+.ep-num { font-size: 1.5rem; font-weight: 800; color: #444; width: 30px; }
+.ep-btn.active .ep-num { color: var(--primary); }
 
-#comments-section {
-    /* (Keep your existing width/margin/background settings) */
-    width: 95%; 
-    max-width: 1100px !important;
-    margin-top: 30px;
-    margin-bottom: 60px;
-    max-height: 700px; /* Taller for Giscus */
-    overflow-y: auto;
-    
-    background: rgba(0, 0, 0, 0.6); 
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 20px; /* Reduced padding for Giscus */
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-/* Scrollbar Styling */
-#comments-section::-webkit-scrollbar { width: 8px; }
-#comments-section::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
-#comments-section::-webkit-scrollbar-track { background: transparent; }
-
-.comments-header {
-    display: flex; align-items: center; 
-    margin-bottom: 20px; padding-bottom: 15px; 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-}
-.comments-title { 
-    font-size: 1.3rem; font-weight: 700; color: #fff; 
-    border-left: 4px solid #8B5CF6; padding-left: 15px; 
-}
-
-/* --- MOBILE SPECIFIC OVERRIDES --- */
-@media (max-width: 768px) {
-    #comments-section {
-        max-width: 100% !important; /* Full width on phone */
-        width: 100% !important;     
-        padding: 15px !important;   /* Less padding = More text space */
-        margin-top: 20px;
-        border-radius: 12px;
-    }
-    
-    /* Add tiny gap on sides of screen */
-    .comments-wrapper {
-        padding: 0 10px; 
-    }
-
-    .comments-title {
-        font-size: 1.1rem; /* Smaller title on phone */
-    }
+/* Mobile */
+@media (max-width: 1100px) {
+    .watch-layout { grid-template-columns: 1fr; height: auto; overflow: visible; }
+    .sidebar-section { height: 600px; border-left: none; border-top: 1px solid #333; }
 }
 
 /* =========================================
-   6. MOBILE RESPONSIVE FIXES
+   6. SEARCH & UTILS
    ========================================= */
-/* Movie Mode Class (Added by JS) */
-.watch-container.movie-mode { grid-template-columns: 1fr; }
-.watch-container.movie-mode .sidebar { display: none; }
+.search-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000;
+    display: none; justify-content: center; padding-top: 100px;
+}
+.search-overlay.active { display: flex; }
+.big-search-input { width: 600px; background: transparent; border: none; border-bottom: 2px solid #333; font-size: 2.5rem; color: white; padding: 10px; outline: none; }
+.close-search { position: absolute; top: 30px; right: 40px; font-size: 2rem; cursor: pointer; }
 
-@media (max-width: 900px) {
-    .grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-    
-    /* Force stack layout on mobile */
-    .watch-container, .watch-container.movie-mode { grid-template-columns: 1fr !important; }
-    
-    .sidebar { width: 100%; height: auto; max-height: 500px; margin-top: 20px; }
-    
-    nav { flex-direction: column; gap: 10px; }
-    .search-input { width: 100%; }
-    .hero-container { height: 300px; }
-    .slide-title { font-size: 2rem; }
-    .slide-content { left: 20px; width: 90%; }
+/* Skeleton */
+.skeleton { background: linear-gradient(90deg, #1f1f1f 25%, #2a2a2a 50%, #1f1f1f 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Mobile Responsive */
+@media (max-width: 1000px) {
+    .watch-layout { grid-template-columns: 1fr; height: auto; overflow: visible; }
+    .player-section { padding: 60px 20px 20px 20px; }
+    .sidebar-section { height: 500px; border-left: none; border-top: 1px solid #333; }
+    .nav-links { display: none; }
 }

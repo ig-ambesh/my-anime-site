@@ -4,23 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My List - AniStream</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="theme-color" content="#141414">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <nav>
-        <a href="index.html" class="logo">AniStream</a>
-        <div class="user-actions">
-            <a href="index.html" class="glass-btn">Home</a>
+    <nav id="navbar">
+        <div style="display: flex; align-items: center; gap: 40px;">
+            <a href="index.html" class="logo">AniStream</a>
+            <div class="nav-links">
+                <button onclick="window.location.href='index.html'">Home</button>
+                <button onclick="window.location.href='mylist.html'" class="active">My List</button>
+            </div>
         </div>
     </nav>
 
-    <div class="container">
-        <h1 class="section-title">My List ❤️</h1>
+    <div class="main-container" style="margin-top: 100px;">
+        <div class="section-header">
+            <h1 class="section-title" style="font-size: 2rem;">My Watchlist ❤️</h1>
+        </div>
         
-        <div class="grid" id="mylist-grid">
-            <h3 style="color: #666; font-weight: 400;">Loading your list...</h3>
+        <div class="grid-wrap" id="mylist-grid">
+            <div class="skeleton anime-card"></div>
+            <div class="skeleton anime-card"></div>
+            <div class="skeleton anime-card"></div>
         </div>
     </div>
 
@@ -30,12 +41,11 @@
     <script src="script.js"></script>
 
     <script>
-        // Wait for auth to check user
         auth.onAuthStateChanged((user) => {
             if (user) {
                 loadMyList(user.uid);
             } else {
-                document.getElementById('mylist-grid').innerHTML = "<h3>Please Login to view your list.</h3>";
+                document.getElementById('mylist-grid').innerHTML = "<h3 style='color:#666;'>Please Login to view your list.</h3>";
             }
         });
 
@@ -43,7 +53,7 @@
             const grid = document.getElementById('mylist-grid');
             
             db.collection('users').doc(uid).collection('mylist').orderBy('timestamp', 'desc').get().then(snapshot => {
-                grid.innerHTML = ""; // Clear loading text
+                grid.innerHTML = ""; 
                 
                 if(snapshot.empty) {
                     grid.innerHTML = "<h3 style='color:#666;'>Your list is empty. Go add some anime!</h3>";
@@ -52,9 +62,17 @@
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    // Re-use the createCard function from script.js
-                    // We pass {id, ...data} just like the homepage
-                    grid.appendChild(createCard({ id: doc.id, ...data }));
+                    // We reuse the createNetflixCard function from script.js
+                    // We construct a data object that matches what the function expects
+                    const cardData = {
+                        id: doc.id,
+                        title: data.title,
+                        image: data.image,
+                        type: data.type || 'Series',
+                        sub: data.sub || '?',
+                        dub: data.dub || 0
+                    };
+                    grid.appendChild(createNetflixCard(cardData));
                 });
             });
         }

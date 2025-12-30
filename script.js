@@ -1,7 +1,7 @@
 // ==========================================
-// 1. FIREBASE CONFIGURATION
+// 1. CONFIGURATION
 // ==========================================
-// ⚠️ PASTE YOUR KEYS HERE
+// 🔴 PASTE YOUR KEYS HERE 🔴
 const firebaseConfig = {
   apiKey: "AIzaSyCChaLOwXv66FOJYy5swjrIU4GQtKUh1Jw",
   authDomain: "anistream-9ef60.firebaseapp.com",
@@ -11,401 +11,336 @@ const firebaseConfig = {
   appId: "1:364571969552:web:aed0d2e751b443ddd4e295"
 };
 
-// Initialize
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 const provider = new firebase.auth.GoogleAuthProvider();
 
+// GLOBAL STATE
+let allContentCache = []; 
+let currentAnimeData = null;
+let currentSeasonIndex = 0;
+let currentEpisodeIndex = 0;
 let currentUser = null;
 
 // ==========================================
 // 2. AUTHENTICATION
 // ==========================================
-function googleLogin() {
-    auth.signInWithPopup(provider)
-        .then(() => location.reload())
-        .catch((error) => console.error(error));
-}
-
-function logout() {
-    auth.signOut().then(() => location.reload());
-}
-
 auth.onAuthStateChanged((user) => {
     const loginBtn = document.getElementById('login-btn');
-    const profile = document.getElementById('user-profile');
-    
+    const avatar = document.getElementById('user-avatar');
     if (user) {
         currentUser = user;
         if(loginBtn) loginBtn.style.display = 'none';
-        if(profile) {
-            profile.style.display = 'block';
-            document.getElementById('user-avatar').src = user.photoURL;
-            document.getElementById('user-name').innerText = user.displayName.split(" ")[0];
-        }
-        loadHistory();
+        if(avatar) { avatar.style.display = 'block'; avatar.src = user.photoURL; }
+        loadHistory(user.uid);
     } else {
         if(loginBtn) loginBtn.style.display = 'block';
-        if(profile) profile.style.display = 'none';
+        if(avatar) avatar.style.display = 'none';
     }
 });
+function googleLogin() { auth.signInWithPopup(provider).then(() => location.reload()); }
+function logout() { auth.signOut().then(() => location.reload()); }
 
 // ==========================================
-// 3. HOME PAGE (GRID & SLIDER)
+// 3. HOME PAGE LOGIC (Fixed Sorting)
 // ==========================================
-const grid = document.getElementById('anime-grid');
-const searchBar = document.getElementById('search-bar');
+function loadHomePage() {
+    const mainRow = document.getElementById('anime-row');
+    const seriesRow = document.getElementById('series-row');
+    const movieRow = document.getElementById('movie-row');
+    
+    if(!mainRow) return;
 
-if (grid) {
-    db.collection("animes").get().then((snapshot) => {
-        let allContent = [];
-        snapshot.forEach(doc => allContent.push({ id: doc.id, ...doc.data() }));
+    db.collection('animes').get().then((snap) => {
+        allContentCache = [];
+        mainRow.innerHTML = "";
+        seriesRow.innerHTML = "";
+        movieRow.innerHTML = "";
 
-        // A. SLIDER LOGIC
-        const sliderContent = allContent.filter(item => item.banner && item.featured === true);
-        if (sliderContent.length > 0) initSlider(sliderContent);
+        snap.forEach(doc => {
+            const data = doc.data();
+            data.id = doc.id;
+            allContentCache.push(data);
+            
+            // 1. Add to Trending
+            mainRow.appendChild(createNetflixCard(data));
 
-        // B. GRID LOGIC
-        function renderGrid(filterText = "") {
-            grid.innerHTML = "";
-            allContent.forEach(item => {
-                if (item.title.toLowerCase().includes(filterText.toLowerCase())) {
-                    grid.appendChild(createCard(item));
-                }
-            });
-        }
-        renderGrid();
-        if(searchBar) searchBar.addEventListener('input', (e) => renderGrid(e.target.value));
+            // 2. Smart Sorting
+            const type = (data.type || '').toLowerCase();
+            
+            if(type === 'movie') {
+                movieRow.appendChild(createNetflixCard(data));
+            } else {
+                // Default to Series if it's not a movie
+                seriesRow.appendChild(createNetflixCard(data));
+            }
+        });
+        
+        // Pick Hero
+        const featured = allContentCache.find(x => x.featured === true) || allContentCache[0];
+        if(featured) renderHero(featured);
     });
 }
 
-function createCard(item, customSubtitle = null) {
-    const card = document.createElement('div');
-    card.classList.add('anime-card');
-
-    // Badges
-    let badgeHTML = "";
-    if (item.lastUpdated && !customSubtitle && item.type !== 'movie') {
-        const days = (new Date() - item.lastUpdated.toDate()) / (1000 * 3600 * 24);
-        if (days < 3) badgeHTML = `<div class="badge-new">NEW EP</div>`;
+function filterContent(type) {
+    const title = document.getElementById('row-title');
+    const mainRow = document.getElementById('anime-row');
+    
+    if (type === 'all') {
+        title.innerText = "Trending Now";
+        document.getElementById('series-section').style.display = 'block';
+        document.getElementById('movie-section').style.display = 'block';
+        renderGrid(allContentCache, mainRow);
+    } else {
+        title.innerText = type === 'movie' ? "Movies" : "Series";
+        document.getElementById('series-section').style.display = 'none';
+        document.getElementById('movie-section').style.display = 'none';
+        
+        const filtered = allContentCache.filter(item => {
+            const itemType = (item.type || 'series').toLowerCase();
+            return itemType === type;
+        });
+        renderGrid(filtered, mainRow);
     }
+}
 
-    let langHTML = "";
-    if (item.language) {
-        let colorClass = "";
-        if(item.language.includes("Dub")) colorClass = "lang-dub";
-        if(item.language.includes("Hindi")) colorClass = "lang-hindi";
-        langHTML = `<div class="badge-lang ${colorClass}">${item.language}</div>`;
-    }
+function renderGrid(items, container) {
+    container.innerHTML = ""; 
+    items.forEach(data => container.appendChild(createNetflixCard(data)));
+}
 
-    // Subtitle
-    let sub = customSubtitle;
-    if (!sub) {
-        sub = item.type === 'movie' ? 'Watch Now' : `${item.seasons ? item.seasons.length : 0} Seasons`;
-    }
-
-    card.innerHTML = `
-        ${badgeHTML}
-        ${langHTML}
-        <img src="${item.image}" onerror="this.src='https://wallpapercave.com/wp/wp2326757.jpg'">
-        <div class="card-info">
-            <h3>${item.title}</h3>
-            <p>${sub}</p>
+function renderHero(data) {
+    const hero = document.getElementById('hero-section');
+    const bg = data.banner || data.image; 
+    const lang = data.language || 'Sub'; 
+    
+    hero.innerHTML = `
+        <div class="hero-slide" style="background-image: url('${bg}')">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">${data.title}</h1>
+                <div style="display:flex; gap:10px; margin-bottom:15px; align-items:center;">
+                    <span style="color:#46d369; font-weight:bold;">98% Match</span>
+                    <span style="border:1px solid #888; padding:0 5px; font-size:0.8rem;">${data.year || '2025'}</span>
+                    <span style="border:1px solid white; padding:0 5px; font-size:0.7rem; border-radius:3px;">HD</span>
+                    <span style="color:#ccc; font-size:0.9rem;">${lang}</span>
+                </div>
+                <p class="hero-desc">${data.description || 'Watch this amazing title now. Full HD streaming available.'}</p>
+                <div class="hero-btns">
+                    <button class="btn-primary" onclick="window.location.href='watch.html?anime=${data.id}'"><i class="fas fa-play"></i> Play</button>
+                    <button class="btn-secondary" onclick="window.location.href='watch.html?anime=${data.id}'"><i class="fas fa-info-circle"></i> More Info</button>
+                </div>
+            </div>
         </div>
     `;
-    card.onclick = () => window.location.href = `watch.html?anime=${item.id}`;
+}
+
+function createNetflixCard(data) {
+    const card = document.createElement('div');
+    card.classList.add('anime-card');
+    
+    const randomMatch = Math.floor(Math.random() * (99 - 80 + 1) + 80);
+    const eps = data.sub || '?';
+    const subDubBadge = data.dub > 0 ? `<span style="border:1px solid #666; padding:0 4px;">Dub</span>` : '';
+
+    card.innerHTML = `
+        <img src="${data.image}" loading="lazy">
+        <div class="card-info">
+            <h4 style="font-size:0.9rem; margin-bottom:5px;">${data.title}</h4>
+            <div class="card-meta">
+                <span class="match">${randomMatch}% Match</span>
+                <span style="border:1px solid #888; padding:0 4px;">${data.type === 'movie' ? 'Movie' : eps + ' eps'}</span>
+                ${subDubBadge}
+            </div>
+        </div>
+    `;
+    card.onclick = () => window.location.href = `watch.html?anime=${data.id}`;
     return card;
 }
 
 // ==========================================
-// 4. HERO SLIDER LOGIC
+// 4. PLAYER & BUTTONS (Fixed)
 // ==========================================
-function initSlider(items) {
-    const wrapper = document.getElementById('hero-slider');
-    const dots = document.getElementById('slider-dots');
-    const prevBtn = document.querySelector('.prev');
-    const nextBtn = document.querySelector('.next');
-
-    const MAX_SLIDES = 5;
-    const featured = items.slice(0, MAX_SLIDES);
-    let current = 0;
-
-    featured.forEach((item, index) => {
-        const slide = document.createElement('div');
-        slide.classList.add('slide');
-        if (index === 0) slide.classList.add('active');
-        slide.style.backgroundImage = `url('${item.banner}')`;
-        
-        slide.innerHTML = `
-            <div class="slide-content">
-                <div class="slide-title">${item.title}</div>
-                <div class="slide-desc">${item.type === 'movie' ? 'Full Movie' : (item.seasons ? item.seasons.length : 0) + ' Seasons Available'}</div>
-                <button class="watch-now-btn" onclick="window.location.href='watch.html?anime=${item.id}'">
-                    <i class="fas fa-play"></i> Watch Now
-                </button>
-            </div>`;
-        wrapper.appendChild(slide);
-
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        if(index === 0) dot.classList.add('active');
-        dot.style.cssText = "width:10px; height:10px; background:rgba(255,255,255,0.3); border-radius:50%; cursor:pointer; transition:0.3s;";
-        if(index === 0) dot.style.background = "white";
-        dot.onclick = () => showSlide(index);
-        dots.appendChild(dot);
-    });
-
-    function showSlide(index) {
-        const slides = document.querySelectorAll('.slide');
-        const allDots = document.querySelectorAll('.dot');
-        if (index >= featured.length) current = 0;
-        else if (index < 0) current = featured.length - 1;
-        else current = index;
-
-        slides.forEach(s => s.classList.remove('active'));
-        allDots.forEach(d => d.style.background = "rgba(255,255,255,0.3)");
-        slides[current].classList.add('active');
-        allDots[current].style.background = "white";
-    }
-
-    if(featured.length > 1) {
-        let interval = setInterval(() => showSlide(current + 1), 5000);
-        if(prevBtn) prevBtn.onclick = () => { showSlide(current - 1); clearInterval(interval); interval = setInterval(() => showSlide(current + 1), 5000); };
-        if(nextBtn) nextBtn.onclick = () => { showSlide(current + 1); clearInterval(interval); interval = setInterval(() => showSlide(current + 1), 5000); };
-    } else {
-        if(prevBtn) prevBtn.style.display = 'none';
-        if(nextBtn) nextBtn.style.display = 'none';
-    }
-}
-
-// ==========================================
-// 5. HISTORY LOGIC
-// ==========================================
-function loadHistory() {
-    if(!grid || !currentUser) return;
-    const section = document.getElementById('continue-watching-section');
-    const hGrid = document.getElementById('history-grid');
-
-    db.collection('users').doc(currentUser.uid).collection('history')
-      .orderBy('timestamp', 'desc').limit(4).get().then(snap => {
-          if(!snap.empty) {
-              section.style.display = 'block';
-              hGrid.innerHTML = "";
-              snap.forEach(doc => {
-                  const d = doc.data();
-                  hGrid.appendChild(createCard({
-                      id: doc.id, title: d.animeTitle, image: d.animeImage, type: d.type
-                  }, d.lastEpisode));
-              });
-          }
-      });
-}
-
-// ==========================================
-// 6. PLAYER LOGIC (Universal)
-// ==========================================
-const player = document.getElementById('video-player');
-
-if (player) {
+function initPlayer() {
     const params = new URLSearchParams(window.location.search);
-    const contentId = params.get('anime');
+    const id = params.get('anime');
+    if (!id) return;
+    db.collection("animes").doc(id).get().then(doc => { if(doc.exists) setupPlayer(doc.data(), id); });
+}
 
-    if (contentId) {
-        db.collection("animes").doc(contentId).get().then(doc => {
-            if (doc.exists) setupPlayer(doc.data(), contentId);
-        });
-    }
+function setupPlayer(content, id) {
+    currentAnimeData = content;
+    currentAnimeData.id = id; // Store ID
+    document.getElementById('anime-title').innerText = content.title;
+    checkMyListStatus(id);
 
-    function setupPlayer(content, id) {
-        currentAnimeData = content;
-        checkMyListStatus(id);
-        document.getElementById('anime-title').innerText = content.title;
+    if (content.type === 'movie') {
+        document.getElementById('video-player').src = content.videoUrl;
+        document.getElementById('ep-title').innerText = "Full Movie";
+        document.querySelector('.sidebar-section').style.display = 'none';
+        document.querySelector('.watch-layout').style.gridTemplateColumns = '1fr';
+        if(currentUser) saveHistory(id, content, "Movie");
+    } else {
         const sTabs = document.getElementById('season-tabs');
         const epList = document.getElementById('episode-list-container');
-        const sidebar = document.querySelector('.sidebar');
-        const watchContainer = document.querySelector('.watch-container');
-
-        // --- MOVIE MODE ---
-        if (content.type === 'movie') {
-            player.src = content.videoUrl;
-            document.getElementById('ep-title').innerText = "Full Movie";
-            if(watchContainer) watchContainer.classList.add('movie-mode');
-            if(sidebar) sidebar.style.display = 'none';
-            saveHistory(id, content, "Movie");
-            loadGiscus(id, "Full Movie");
-            return;
+        
+        if (!content.seasons || content.seasons.length === 0) { 
+            epList.innerHTML = "<h3 style='color:white; padding:20px;'>No episodes found.</h3>"; 
+            return; 
         }
-
-        // --- SERIES MODE ---
-        if(watchContainer) watchContainer.classList.remove('movie-mode');
-        if(sidebar) sidebar.style.display = 'flex';
-
-        content.seasons.forEach((season, index) => {
+        
+        sTabs.innerHTML = "";
+        content.seasons.forEach((season, idx) => {
             const btn = document.createElement('button');
-            btn.classList.add('season-btn');
-            btn.innerText = season.name;
-            btn.onclick = () => loadEpisodes(index);
+            btn.className = `season-btn ${idx===0 ? 'active-season' : ''}`;
+            btn.innerText = season.name || `Season ${idx+1}`;
+            btn.onclick = () => renderEpisodes(idx);
             sTabs.appendChild(btn);
         });
-        if(content.seasons.length > 0) loadEpisodes(0);
-
-        function loadEpisodes(seasonIndex) {
-            epList.innerHTML = "";
-            content.seasons[seasonIndex].episodes.forEach(ep => {
-                const btn = document.createElement('div');
-                btn.classList.add('ep-btn');
-                btn.innerText = ep.title;
-                btn.onclick = () => {
-                    player.src = ep.url;
-                    document.getElementById('ep-title').innerText = ep.title;
-                    document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    saveHistory(id, content, `Ep: ${ep.title}`);
-                    loadGiscus(id, ep.title);
-                };
-                epList.appendChild(btn);
-            });
-        }
-    }
-
-    function saveHistory(id, content, progressText) {
-        if(currentUser) {
-            db.collection('users').doc(currentUser.uid).collection('history').doc(id).set({
-                animeTitle: content.title, animeImage: content.image, lastEpisode: progressText,
-                type: content.type || 'series', timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-    }
-}
-
-// ==========================================
-// 7. GISCUS COMMENTS (Stable ID Fix)
-// ==========================================
-function loadGiscus(animeId, seasonIndex, episodeIndex) {
-    const container = document.getElementById('comments-section');
-    const iframe = document.querySelector('iframe.giscus-frame');
-    
-    // 1. GENERATE A STABLE ID (e.g., "naruto_s0_e1")
-    // This ignores the title text, so comments never get lost.
-    const term = `${animeId}_s${seasonIndex}_e${episodeIndex}`;
-    
-    console.log("Loading Comments for ID:", term); // Check Console (F12) if issues persist
-
-    // 2. CHECK IF GISCUS IS ALREADY LOADED
-    if (iframe) {
-        // Hot Reload (Fast Switch)
-        iframe.contentWindow.postMessage({
-            giscus: {
-                setConfig: {
-                    term: term,
-                    reactionsEnabled: '1',
-                    emitMetadata: '0',
-                    inputPosition: 'top',
-                    theme: 'transparent_dark',
-                    lang: 'en'
-                }
-            }
-        }, 'https://giscus.app');
         
-    } else {
-        // Initial Load
-        container.innerHTML = `
-            <div class="comments-header">
-                <h3 class="comments-title">Discussion</h3>
-            </div>
-            <div class="giscus"></div>
-        `;
+        // Make renderEpisodes available globally
+        window.renderEpisodes = (idx) => {
+            epList.innerHTML = "";
+            currentSeasonIndex = idx;
+            
+            // Update active tab style
+            document.querySelectorAll('.season-btn').forEach((b, i) => {
+                if(i === idx) b.classList.add('active-season');
+                else b.classList.remove('active-season');
+            });
 
-        const script = document.createElement('script');
-        script.src = "https://giscus.app/client.js";
-
-        // ⚠️ PASTE YOUR KEYS HERE ⚠️
-        script.setAttribute("data-repo", "ig-ambesh/my-website-comments");
-        script.setAttribute("data-repo-id", "R_kgDOQwo8og");
-        script.setAttribute("data-category", "General");
-        script.setAttribute("data-category-id", "DIC_kwDOQwo8os4C0Wk9");
-
-        // Settings
-        script.setAttribute("data-mapping", "pathname");
-        script.setAttribute("data-term", term); // <--- Uses stable ID
-        script.setAttribute("data-strict", "0");
-        script.setAttribute("data-reactions-enabled", "1");
-        script.setAttribute("data-emit-metadata", "0");
-        script.setAttribute("data-input-position", "bottom");
-        script.setAttribute("data-theme", "transparent_dark");
-        script.setAttribute("data-lang", "en");
-        script.setAttribute("crossorigin", "anonymous");
-        script.async = true;
-
-        container.appendChild(script);
+            content.seasons[idx].episodes.forEach((ep, eIdx) => {
+                const div = document.createElement('div');
+                div.className = 'ep-btn';
+                div.innerHTML = `<span class="ep-num">${eIdx+1}</span> <span>${ep.title}</span>`;
+                
+                div.onclick = () => {
+                    playEpisode(idx, eIdx);
+                };
+                epList.appendChild(div);
+            });
+        };
+        
+        // Auto play first episode of first season
+        renderEpisodes(0);
+        playEpisode(0, 0);
     }
 }
 
-// ==========================================
-// 8. MY LIST SYSTEM (Favorites)
-// ==========================================
-let currentAnimeData = null; // Store data to save later
-
-// 1. Check if Anime is already in My List
-function checkMyListStatus(animeId) {
-    if (!currentUser) return; // Not logged in? Do nothing.
-
-    const btn = document.getElementById('mylist-btn');
-    const icon = document.getElementById('mylist-icon');
-    const text = document.getElementById('mylist-text');
+function playEpisode(seasonIdx, episodeIdx) {
+    const ep = currentAnimeData.seasons[seasonIdx].episodes[episodeIdx];
+    document.getElementById('video-player').src = ep.url;
+    document.getElementById('ep-title').innerText = `S${seasonIdx+1} E${episodeIdx+1}: ${ep.title}`;
     
-    // Check Firebase
-    db.collection('users').doc(currentUser.uid).collection('mylist').doc(animeId).get()
-    .then(doc => {
-        if (doc.exists) {
-            // It IS in the list -> Show "Remove" style
-            btn.style.background = "#FF3D77"; // Pink
-            btn.style.borderColor = "#FF3D77";
-            icon.classList.remove('far'); // Empty heart
-            icon.classList.add('fas');    // Solid heart
-            text.innerText = "In My List";
-        } else {
-            // Not in list -> Show default style
-            btn.style.background = "rgba(255,255,255,0.1)";
-            icon.classList.remove('fas');
-            icon.classList.add('far');
-            text.innerText = "Add to List";
-        }
+    currentSeasonIndex = seasonIdx;
+    currentEpisodeIndex = episodeIdx;
+
+    // Highlight active episode
+    document.querySelectorAll('.ep-btn').forEach((btn, idx) => {
+        if(idx === episodeIdx) btn.classList.add('active');
+        else btn.classList.remove('active');
     });
+
+    if(currentUser) saveHistory(currentAnimeData.id, currentAnimeData, `S${seasonIdx+1} E${episodeIdx+1}`);
 }
 
-// 2. The Toggle Function (Add/Remove)
-function toggleMyList() {
-    if (!currentUser) return alert("Please Login to use My List!");
+// REAL NEXT EPISODE LOGIC
+function playNextEpisode() {
+    if(!currentAnimeData || currentAnimeData.type === 'movie') return alert("No next episode for movies.");
     
-    const params = new URLSearchParams(window.location.search);
-    const animeId = params.get('anime');
-    const btn = document.getElementById('mylist-btn');
+    const season = currentAnimeData.seasons[currentSeasonIndex];
+    
+    // Check if there is a next episode in this season
+    if(currentEpisodeIndex + 1 < season.episodes.length) {
+        playEpisode(currentSeasonIndex, currentEpisodeIndex + 1);
+    } 
+    // Check if there is a next season
+    else if(currentSeasonIndex + 1 < currentAnimeData.seasons.length) {
+        renderEpisodes(currentSeasonIndex + 1);
+        playEpisode(currentSeasonIndex + 1, 0); // Play first ep of next season
+    } 
+    else {
+        alert("You've reached the end of the series!");
+    }
+}
 
-    // We need the data we loaded earlier
-    if (!currentAnimeData || !animeId) return;
+// SHARE & MY LIST
+function shareAnime() {
+    const url = window.location.href;
+    if (navigator.share) navigator.share({ title: 'Watch Anime', url: url });
+    else {
+        navigator.clipboard.writeText(url).then(() => alert("Link Copied to Clipboard!"));
+    }
+}
 
-    const docRef = db.collection('users').doc(currentUser.uid).collection('mylist').doc(animeId);
+function toggleMyList() {
+    if (!currentUser) return alert("Please Login to use My List");
+    const id = new URLSearchParams(window.location.search).get('anime');
+    const ref = db.collection('users').doc(currentUser.uid).collection('mylist').doc(id);
 
-    docRef.get().then(doc => {
+    ref.get().then(doc => {
         if (doc.exists) {
-            // REMOVE IT
-            docRef.delete().then(() => {
-                checkMyListStatus(animeId); // Reset button UI
+            ref.delete().then(() => {
+                alert("Removed from List");
+                checkMyListStatus(id);
             });
         } else {
-            // ADD IT
-            docRef.set({
+            ref.set({
                 title: currentAnimeData.title,
                 image: currentAnimeData.image,
                 type: currentAnimeData.type,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                timestamp: Date.now()
             }).then(() => {
-                checkMyListStatus(animeId); // Update button UI
+                alert("Added to List");
+                checkMyListStatus(id);
             });
         }
     });
 }
+
+function checkMyListStatus(id) {
+    if (!currentUser) return;
+    const btn = document.getElementById('mylist-btn');
+    const icon = document.getElementById('mylist-icon');
+    
+    db.collection('users').doc(currentUser.uid).collection('mylist').doc(id).get().then(doc => {
+        if (doc.exists) {
+            icon.classList.remove('far'); 
+            icon.classList.add('fas'); // Solid heart
+            icon.style.color = '#e50914';
+        } else {
+            icon.classList.remove('fas'); 
+            icon.classList.add('far'); // Outline heart
+            icon.style.color = 'white';
+        }
+    });
+}
+
+function saveHistory(id, content, label) {
+    db.collection('users').doc(currentUser.uid).collection('history').doc(id).set({
+        animeTitle: content.title, animeImage: content.image, lastEpisode: label, timestamp: Date.now(), type: content.type
+    });
+}
+
+function loadHistory(uid) {
+    // ... (Same as before) ...
+    // Keeping existing history logic
+    db.collection('users').doc(uid).collection('history').orderBy('timestamp', 'desc').limit(5).get().then(snap => {
+        if(!snap.empty) {
+            document.getElementById('continue-watching-row').style.display = 'block';
+            const grid = document.getElementById('history-grid');
+            grid.innerHTML = "";
+            snap.forEach(doc => {
+                const d = doc.data();
+                const cardData = { title: d.animeTitle, image: d.animeImage, id: doc.id, type: d.type, sub: d.lastEpisode };
+                grid.appendChild(createNetflixCard(cardData));
+            });
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('anime-row')) loadHomePage();
+    if (document.getElementById('video-player')) initPlayer();
+});
