@@ -67,9 +67,16 @@ nav.scrolled { background: var(--bg-glass); backdrop-filter: blur(10px); border-
 .hero-wrapper { position: relative; height: 85vh; width: 100%; margin-bottom: -60px; }
 .mySwiper { width: 100%; height: 100%; }
 .swiper-slide {
-    background-size: cover; background-position: center;
-    display: flex; align-items: center; padding: 0 4%; position: relative;
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+    /* Use the variable we created in JS */
+    background-image: var(--bg-pc); 
+    background-size: cover; 
+    background-position: center; /* Center the 16:9 banner */
+    display: flex; 
+    align-items: center; 
+    padding: 0 4%; 
+    position: relative;
+    /* Smooth fade between slides */
+    transition: background-image 0.3s ease-in-out;
 }
 .hero-overlay { position: absolute; inset: 0; background: radial-gradient(circle at 70% 50%, transparent 0%, var(--bg-main) 120%), linear-gradient(90deg, var(--bg-main) 10%, transparent 60%); pointer-events: none; }
 .hero-content { position: relative; z-index: 10; max-width: 650px; animation: slideUp 0.8s var(--ease-out); }
@@ -227,11 +234,25 @@ nav.scrolled { background: var(--bg-glass); backdrop-filter: blur(10px); border-
     .nav-item img { width: 24px; height: 24px; border-radius: 50%; margin-bottom: 3px; border: 1px solid #666; }
 
     /* Hero Fixes */
-    .hero-wrapper { height: 55vh; margin-bottom: 0; }
-    .hero-title { font-size: 1.5rem; margin-bottom: 5px; }
+    .hero-wrapper { 
+        height: auto !important;    /* Let the height grow naturally */
+        aspect-ratio: 2/3;          /* Standard Movie Poster Ratio */
+        width: 100%;
+        margin-bottom: 0; 
+    }
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
     .hero-content .match, .hero-content span { font-size: 0.7rem; }
     .hero-desc { display: none; }
-    .hero-content { padding-top: 0; justify-content: flex-end; display: flex; flex-direction: column; height: 100%; padding-bottom: 20px; }
+    .hero-content {
+        height: auto !important;       /* Stop it from being full height */
+        width: 100%;                   /* Full width */
+        padding-bottom: 50px;          /* Lift text up slightly from edge */
+        background: transparent;       /* Remove any accidental backgrounds */
+        justify-content: flex-end;     /* Ensure internal items align down */
+    }
     
     .hero-btns .btn-primary, .hero-btns .btn-secondary { padding: 8px 16px; font-size: 0.9rem; }
 
@@ -245,6 +266,18 @@ nav.scrolled { background: var(--bg-glass); backdrop-filter: blur(10px); border-
     }
     .search-container { 
         width: 100%; max-width: none; padding: 0;
+    }
+
+    .swiper-slide {
+        background-image: var(--bg-mobile) !important;
+        background-size: cover !important;
+        background-position: center top !important;
+        align-items: flex-end !important; /* <--- THIS FIXES IT */
+    }
+
+    /* 3. Fix the overlay to make text readable on busy posters */
+    .hero-overlay {
+        background: linear-gradient(to top, #141414 10%, rgba(20,20,20,0.4) 50%, transparent 100%) !important;
     }
     
     .search-header-bar {

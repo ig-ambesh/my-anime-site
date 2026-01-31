@@ -89,12 +89,18 @@ function loadHomePage() {
 function renderHeroSlider(items) {
     const container = document.getElementById('hero-section');
     let slidesHTML = '';
+    
     items.forEach(data => {
-        const bg = data.banner || data.image;
+        // 1. Define both images
+        const desktopImg = data.banner || data.image; // 16:9 Banner
+        const mobileImg = data.image || data.banner;  // Vertical Poster
+
         const lang = data.language || 'Sub';
         const year = data.year || '2025';
+
+        // 2. We inject CSS Variables (--bg-pc and --bg-mobile) into the style attribute
         slidesHTML += `
-            <div class="swiper-slide" style="background-image: url('${bg}')">
+            <div class="swiper-slide" style="--bg-pc: url('${desktopImg}'); --bg-mobile: url('${mobileImg}');">
                 <div class="hero-overlay"></div>
                 <div class="hero-content">
                     <h1 class="hero-title">${data.title}</h1>
@@ -112,8 +118,16 @@ function renderHeroSlider(items) {
                 </div>
             </div>`;
     });
+
     container.innerHTML = `<div class="swiper mySwiper"><div class="swiper-wrapper">${slidesHTML}</div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div><div class="swiper-pagination"></div></div>`;
-    new Swiper(".mySwiper", { loop: true, effect: "fade", autoplay: { delay: 5000, disableOnInteraction: false }, pagination: { el: ".swiper-pagination", clickable: true }, navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" } });
+    
+    new Swiper(".mySwiper", { 
+        loop: true, 
+        effect: "fade", 
+        autoplay: { delay: 5000, disableOnInteraction: false }, 
+        pagination: { el: ".swiper-pagination", clickable: true }, 
+        navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" } 
+    });
 }
 
 function filterContent(type) {
